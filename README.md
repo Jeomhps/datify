@@ -4,14 +4,30 @@ Datelib is a simple date package that allows users to format dates in new ways a
 
 ## Installation
 
-ToDo
+```typst
+#import "@preview/datelib:0.1.0": dayName, monthName, writtenDate
+```
 
 ## Reference
 
 ### dayName
 Return the Name of the weekday.
 #### Example
-put example
+
+```typst
+#import "@preview/datelib:0.1.0": dayName
+
+#dayName(2)
+#dayName(1, lang: "fr", upper: true)
+```
+
+Output:
+
+```
+tuesday
+Lundi
+```
+
 #### parameters
 ```typst
 dayName(int or str, lang: str, upper: boolean) --> str
@@ -31,7 +47,19 @@ Returns the name of the month.
 
 #### Example
 
-put example
+```typst
+#import "@preview/datelib:0.1.0": monthName
+
+#monthName(2)
+#monthName(1, lang: "fr", upper: true)
+```
+
+Output:
+
+```
+february
+Janvier
+```
 
 #### parameters
 ```typst
@@ -51,12 +79,32 @@ Return the fully written date.
 
 #### Example
 
-put example
+```typst
+#import "@preview/datelib:0.1.0": writtenDate
+
+#let mydate = (
+    weekday: 4
+    day: 23
+    month: 5
+    year: 2024
+)
+
+#writtenDate(mydate)
+#writtenDate(mydate, lang: "fr")
+
+```
+
+Output:
+
+```
+thursday 23 may 2024
+jeudi 23 mai 2024
+```
 
 #### parameters
 
 ```typst
-writtenDate(date) --> content
+writtenDate(date, lang: str = 'en') --> content
 ```
 
 The date must be a dictionary containing the following elements:
