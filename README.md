@@ -22,6 +22,7 @@ dayName(int or str, lang: str, upper: boolean) --> str
 | weekday* | The weekday as an integer (1-7) or a string ("1"-"7"). | none |
 | lang | An ISO 639-1 code representing the language. | en
 | upper | A boolean that sets the first letter to be uppercase. | false |
+
 \* required
 
 ### monthName
@@ -41,6 +42,7 @@ monthName(month: int or str, lang: str = 'en', upper: bool = false) -> str
 | month* | The month as an integer (1-12) or a string ("1"-"12"). | none |
 | lang | An ISO 639-1 code representing the language. | en
 | upper | A boolean that sets the first letter to be uppercase. | false |
+
 \* required
 
 ### writtenDate
