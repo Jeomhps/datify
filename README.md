@@ -5,7 +5,7 @@ Datelib is a simple date package that allows users to format dates in new ways a
 ## Installation
 
 ```typst
-#import "@preview/datelib:0.1.0": dayName, monthName, writtenDate
+#import "@preview/datelib:0.1.1": dayName, monthName, writtenDate
 ```
 
 ## Reference
@@ -15,7 +15,7 @@ Return the Name of the weekday.
 #### Example
 
 ```typst
-#import "@preview/datelib:0.1.0": dayName
+#import "@preview/datelib:0.1.1": dayName
 
 #dayName(2)
 #dayName(1, lang: "fr", upper: true)
@@ -28,7 +28,7 @@ tuesday
 Lundi
 ```
 
-#### parameters
+#### Parameters
 ```typst
 dayName(int or str, lang: str, upper: boolean) --> str
 
@@ -48,7 +48,7 @@ Returns the name of the month.
 #### Example
 
 ```typst
-#import "@preview/datelib:0.1.0": monthName
+#import "@preview/datelib:0.1.1": monthName
 
 #monthName(2)
 #monthName(1, lang: "fr", upper: true)
@@ -61,11 +61,11 @@ february
 Janvier
 ```
 
-#### parameters
+#### Parameters
 ```typst
 monthName(month: int or str, lang: str = 'en', upper: bool = false) -> str
 ```
-|name| info | default |
+|Parameter | Description | Default |
 |--|--|--|
 | month* | The month as an integer (1-12) or a string ("1"-"12"). | none |
 | lang | An ISO 639-1 code representing the language. | en
@@ -80,7 +80,7 @@ Return the fully written date.
 #### Example
 
 ```typst
-#import "@preview/datelib:0.1.0": writtenDate
+#import "@preview/datelib:0.1.1": writtenDate
 
 #let mydate = (
     weekday: 4
