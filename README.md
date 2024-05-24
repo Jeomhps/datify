@@ -30,7 +30,7 @@ Lundi
 
 #### Parameters
 ```typst
-dayName(int or str, lang: str, upper: boolean) --> str
+dayName(weekday: int or str, lang: str, upper: boolean) --> str
 
 ```
 |Parameter | Description | Default |
