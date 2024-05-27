@@ -1,28 +1,28 @@
-#let dayNames =  toml("dayName.toml") 
-#let monthNames = toml("monthName.toml")
+#let day-names =  toml("dayName.toml") 
+#let month-names = toml("monthName.toml")
 
-#let firstLetterToUpper(string) = (
+#let first-letter-to-upper(string) = (
   string.replace(regex("^\w"), m=>{upper(m.text)})
 ) 
 
-#let dayName(weekday, lang: "en", upper: false) = (
-  let weekdayToStr = str(weekday),
+#let day-name(weekday, lang: "en", upper: false) = (
+  let weekday-to-str = str(weekday),
   if upper == true {
-    return firstLetterToUpper(dayNames.at(lang).at(weekdayToStr))
+    return first-letter-to-upper(day-names.at(lang).at(weekday-to-str))
   } else {
-    return dayNames.at(lang).at(weekdayToStr)
+    return day-names.at(lang).at(weekday-to-str)
   }
 )
 
-#let monthName(month, lang: "en", upper: false) = (
-  let monthToStr = str(month),
+#let month-name(month, lang: "en", upper: false) = (
+  let month-to-str = str(month),
   if upper == true {
-    return firstLetterToUpper(monthNames.at(lang).at(monthToStr))
+    return first-letter-to-upper(month-names.at(lang).at(month-to-str))
   } else {
-    return monthNames.at(lang).at(monthToStr)
+    return month-names.at(lang).at(month-to-str)
   }
 )
 
-#let writtenDate(date, lang: "en") = (
-  return [#dayName(date.weekday, lang: lang) #date.day #monthName(date.month, lang: lang) #date.year]
+#let written-date(date, lang: "en") = (
+  return [#day-name(date.weekday, lang: lang) #date.day #month-name(date.month, lang: lang) #date.year]
 )
