@@ -4,6 +4,8 @@ Datify is a simple date package that allows users to format dates in new ways an
 
 ## Installation
 
+⚠️  The current version on Typst Universe does not support kebab-case yet. Thus, the functions in this documentation are named dayName, monthName, and writtenDate for the typst universe version. I will make an update soon when I have enough content. ⚠️
+
 ```typst
 #import "@preview/datify:0.1.1": day-name, month-name, written-date
 ```
