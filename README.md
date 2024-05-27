@@ -5,20 +5,20 @@ Datify is a simple date package that allows users to format dates in new ways an
 ## Installation
 
 ```typst
-#import "@preview/datify:0.1.1": dayName, monthName, writtenDate
+#import "@preview/datify:0.1.1": day-name, month-name, written-date
 ```
 
 ## Reference
 
-### dayName
+### day-name
 Return the Name of the weekday.
 #### Example
 
 ```typst
-#import "@preview/datify:0.1.1": dayName
+#import "@preview/datify:0.1.1": day-name
 
-#dayName(2)
-#dayName(1, lang: "fr", upper: true)
+#day-name(2)
+#day-name(1, lang: "fr", upper: true)
 ```
 
 Output:
@@ -30,7 +30,7 @@ Lundi
 
 #### Parameters
 ```typst
-dayName(weekday: int or str, lang: str, upper: boolean) --> str
+day-name(weekday: int or str, lang: str, upper: boolean) --> str
 
 ```
 |Parameter | Description | Default |
@@ -41,17 +41,17 @@ dayName(weekday: int or str, lang: str, upper: boolean) --> str
 
 \* required
 
-### monthName
+### month-name
 
 Returns the name of the month.
 
 #### Example
 
 ```typst
-#import "@preview/datify:0.1.1": monthName
+#import "@preview/datify:0.1.1": month-name
 
-#monthName(2)
-#monthName(1, lang: "fr", upper: true)
+#month-name(2)
+#month-name(1, lang: "fr", upper: true)
 ```
 
 Output:
@@ -63,7 +63,7 @@ Janvier
 
 #### Parameters
 ```typst
-monthName(month: int or str, lang: str = 'en', upper: bool = false) -> str
+month-name(month: int or str, lang: str = 'en', upper: bool = false) -> str
 ```
 |Parameter | Description | Default |
 |--|--|--|
@@ -73,24 +73,24 @@ monthName(month: int or str, lang: str = 'en', upper: bool = false) -> str
 
 \* required
 
-### writtenDate
+### written-date
 
 Return the fully written date.
 
 #### Example
 
 ```typst
-#import "@preview/datify:0.1.1": writtenDate
+#import "@preview/datify:0.1.1": written-date
 
-#let mydate = (
-    weekday: 4
-    day: 23
-    month: 5
+#let my-date = (
+    weekday: 4,
+    day: 23,
+    month: 5,
     year: 2024
 )
 
-#writtenDate(mydate)
-#writtenDate(mydate, lang: "fr")
+#written-date(my-date)
+#written-date(my-date, lang: "fr")
 
 ```
 
@@ -104,7 +104,7 @@ jeudi 23 mai 2024
 #### parameters
 
 ```typst
-writtenDate(date, lang: str = 'en') --> content
+written-date(date, lang: str = 'en') --> content
 ```
 
 The date must be a dictionary containing the following elements:
@@ -116,7 +116,7 @@ The date must be a dictionary containing the following elements:
 
 Example of a date:
 ```typst
-#let myDate = (
+#let my-date = (
 	weekday: 2
 	day: 22
 	month: 5
