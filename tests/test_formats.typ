@@ -9,3 +9,22 @@
 #assert(custom-date-format(date, "Month DD, YYYY") == "August 29, 2024")
 #assert(custom-date-format(date, "month DD, YYYY") == "august 29, 2024")
 #assert(custom-date-format(date, "month DDth, YYYY") == "august 29th, 2024")
+
+#let french_date = datetime(year: 2024, month: 5, day: 23)
+#assert(custom-date-format(french_date, "Day, DD Month YYYY", "fr") == "Jeudi, 23 Mai 2024")
+
+
+//  error: string index 3 is not a character boundary
+//    ┌─ \\datify\src\formats.typ:37:25
+//    │
+// 37 │   let short-month-name = full-month.slice(0, 3)
+//    │                          ^^^^^^^^^^^^^^^^^^^^^^
+//
+//  help: error occurred in this function call
+//    ┌─ \\datify\tests\test_formats.typ:17:8
+//    │
+// 17 │ #assert(custom-date-format(french_date, "Day, DD MMM YYYY", "fr") == "Jeudi, 23 Aoû 2024")
+//    │         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+#let french_date = datetime(year: 2024, month: 8, day: 23)
+#assert(custom-date-format(french_date, "Day, DD MMM YYYY", "fr") == "Jeudi, 23 Aoû 2024")
