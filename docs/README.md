@@ -110,6 +110,7 @@ custom-date-format(date: datetime, format: str, lang: str = 'en') -> str
 | date*     | A datetime object representing the date.       | none    |
 | format*   | A string representing the desired date format. | none    |
 | lang      | An ISO 639-1 code representing the language.   | en      |
+
 \* required
 
 #### Format Types
