@@ -1,8 +1,19 @@
 #import "utils.typ": first-letter-to-upper, pad
 #import "translations.typ": month-name, day-name
+#import "config.typ": default-date-lang
 
-#let custom-date-format = (date, format) => {
-  // take all the information, stock it and reformat it.
+#let custom-date-format = (date, format, ..args) => {
+  // Default values
+  let lang = default-date-lang
+
+  // Process variable arguments to extract lang
+  for arg in args.pos() {
+    if type(arg) == "string" {
+      lang = arg
+    }
+  }
+
+  // Take all the information, stock it and reformat it.
   let day = pad(date.day(), 2)
   let month = pad(date.month(), 2)
   let year = str(date.year())
@@ -11,8 +22,8 @@
   let short-year = year.slice(-2)
   
   // Uses the name function to return name in the correct languages
-  let full-day = day-name(int(weekday))
-  let full-month = month-name(int(month))
+  let full-day = day-name(int(weekday), lang)
+  let full-month = month-name(int(month), lang)
   
   // Correct name for the language with and uppercase at the start
   let capitalized-day = first-letter-to-upper(full-day)
