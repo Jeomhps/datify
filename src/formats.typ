@@ -1,4 +1,4 @@
-#import "utils.typ": first-letter-to-upper, pad
+#import "utils.typ": first-letter-to-upper, pad, safe-slice 
 #import "translations.typ": month-name, day-name
 #import "config.typ": default-date-lang
 
@@ -34,7 +34,7 @@
   let uppercase-month = upper(full-month)
   
   // Short name for months, i.e January = Jan
-  let short-month-name = full-month.slice(0, 3) 
+  let short-month-name =  if full-month.len() > 3 { safe-slice(full-month, 3) } else { full-month }
 
   // Format the arg format in the right form and returns it.
   let formatted = format

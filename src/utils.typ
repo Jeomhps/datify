@@ -14,3 +14,15 @@
   }
   return padding + str_num
 }
+
+#let safe-slice = (s, length) => {
+  let result = ""
+  for ch in s {
+    if result.len() < length {
+      result += ch
+    } else {
+      break
+    }
+  }
+  result
+}
