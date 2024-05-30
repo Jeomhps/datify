@@ -1,4 +1,4 @@
-# datify
+# Datify
 
 Datify is a simple date package that allows users to format dates in new ways and addresses the issue of lacking date formats in different languages.
 
@@ -6,21 +6,25 @@ Datify is a simple date package that allows users to format dates in new ways an
 
 ⚠️  The current version on Typst Universe does not support kebab-case yet. Thus, the functions in this documentation are named dayName, monthName, and writtenDate for the typst universe version. I will make an update soon when I have enough content. ⚠️
 
+To include this package in your Typst project, add the following to your project file:
+
 ```typst
-#import "@preview/datify:0.1.1": day-name, month-name, written-date
+#import "@preview/datify:0.1.1": day-name, month-name, custom-date-format
 ```
 
 ## Reference
 
-### day-name
-Return the Name of the weekday.
+### `day-name`
+
+Returns the name of the weekday.
+
 #### Example
 
 ```typst
 #import "@preview/datify:0.1.1": day-name
 
 #day-name(2)
-#day-name(1, lang: "fr", upper: true)
+#day-name(1,"fr",true)
 ```
 
 Output:
@@ -31,19 +35,20 @@ Lundi
 ```
 
 #### Parameters
+
 ```typst
 day-name(weekday: int or str, lang: str, upper: boolean) --> str
-
 ```
-|Parameter | Description | Default |
-|--|--|--|
-| weekday* | The weekday as an integer (1-7) or a string ("1"-"7"). | none |
-| lang | An ISO 639-1 code representing the language. | en
-| upper | A boolean that sets the first letter to be uppercase. | false |
+
+| Parameter | Description                                            | Default |
+|-----------|--------------------------------------------------------|---------|
+| weekday*  | The weekday as an integer (1-7) or a string ("1"-"7"). | none    |
+| lang      | An ISO 639-1 code representing the language.           | en      |
+| upper     | A boolean that sets the first letter to be uppercase.  | false   |
 
 \* required
 
-### month-name
+### `month-name`
 
 Returns the name of the month.
 
@@ -53,7 +58,7 @@ Returns the name of the month.
 #import "@preview/datify:0.1.1": month-name
 
 #month-name(2)
-#month-name(1, lang: "fr", upper: true)
+#month-name(1, "fr", true)
 ```
 
 Output:
@@ -64,68 +69,87 @@ Janvier
 ```
 
 #### Parameters
+
 ```typst
 month-name(month: int or str, lang: str = 'en', upper: bool = false) -> str
 ```
-|Parameter | Description | Default |
-|--|--|--|
-| month* | The month as an integer (1-12) or a string ("1"-"12"). | none |
-| lang | An ISO 639-1 code representing the language. | en
-| upper | A boolean that sets the first letter to be uppercase. | false |
+
+| Parameter | Description                                            | Default |
+|-----------|--------------------------------------------------------|---------|
+| month*    | The month as an integer (1-12) or a string ("1"-"12"). | none    |
+| lang      | An ISO 639-1 code representing the language.           | en      |
+| upper     | A boolean that sets the first letter to be uppercase.  | false   |
 
 \* required
 
-### written-date
+### `custom-date-format`
 
-Return the fully written date.
+Formats a given date according to a specified format and language.
 
 #### Example
 
 ```typst
-#import "@preview/datify:0.1.1": written-date
+#import "@preview/datify:0.1.1": custom-date-format
 
-#let my-date = (
-    weekday: 4,
-    day: 23,
-    month: 5,
-    year: 2024
-)
-
-#written-date(my-date)
-#written-date(my-date, lang: "fr")
-
+#let my-date = datetime(year: 2024, month: 8, day: 4)
+#custom-date-format(my-date, "MMMM DDth, YYYY")
 ```
 
 Output:
 
 ```
-thursday 23 may 2024
-jeudi 23 mai 2024
+August 04th, 2024
 ```
 
-#### parameters
+#### Parameters
 
 ```typst
-written-date(date, lang: str = 'en') --> content
+custom-date-format(date: datetime, format: str, lang: str = 'en') -> str
 ```
 
-The date must be a dictionary containing the following elements:
+| Parameter | Description                                    | Default |
+|-----------|------------------------------------------------|---------|
+| date*     | A datetime object representing the date.       | none    |
+| format*   | A string representing the desired date format. | none    |
+| lang      | An ISO 639-1 code representing the language.   | en      |
+\* required
 
-- weekday: An integer/string (1-7) representing the weekday.
-- day: An integer representing the day of the month.
-- month: An integer/string (1-12) representing the month.
-- year: An integer representing the year.
+#### Format Types
 
-Example of a date:
+Below is a table of all possible format types that can be used in the format string:
+
+| Format | Description                            | Example       |
+|--------|----------------------------------------|---------------|
+| `DD`   | Day of the month, 2 digits             | 05            |
+| `day`  | Full name of the day                   | tuesday       |
+| `Day`  | Capitalized full name of the day       | Tuesday       |
+| `DAY`  | Uppercase full name of the day         | TUESDAY       |
+| `MMMM` | Capitalized full name of the month     | Mqy           |
+| `MMM`  | Short name of the month (first 3 chars)| May           |
+| `MM`   | Month number, 2 digits                 | 05            |
+| `month`| Full name of the month                 | may           |
+| `Month`| Capitalized full name of the month     | May           |
+| `MONTH`| Uppercase full name of the month       | MAY           |
+| `YYYY` | 4-digit year                           | 2023          |
+| `YY`   | Last 2 digits of the year              | 23            |
+
+
+## Examples
+
+Here are some examples demonstrating the usage of the functions provided by the Datify package:
+
 ```typst
-#let my-date = (
-	weekday: 2
-	day: 22
-	month: 5
-	year: 2024
-)
+#let my-date = datetime(year: 2024, month: 12, day: 25)
+
+#custom-date-format(my-date, "DD-MM-YYYY")  // Output: 25-12-2024
+#custom-date-format(my-date, "Day, DD Month YYYY", "fr")  // Output: Mercredi, 25 Décembre 2024
+
+#day-name(4)  // Output: thursday
+
+#month-name(12)  // Output: december
 ```
-# Supported language
+
+## Supported language
 
 | ISO 639-1 code | Status       |
 |----------------|--------------|
@@ -314,7 +338,15 @@ Example of a date:
 | zh             | ❌           |
 | zu             | ❌           |
 
+## Contributing
 
-# Planned
+Contributions are welcome! Please feel free to submit a pull request or open an issue if you encounter any problems.
+
+## License
+
+This project is licensed under the MIT License.
+
+## Planned
 - Adding support for more language
-- Adding new methods 
+- Adding set and get method to set default language for a whole document
+- Adding new methods
