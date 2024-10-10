@@ -15,3 +15,9 @@
 
 #let french_date = datetime(year: 2024, month: 8, day: 23)
 #assert(custom-date-format(french_date, "Day, DD MMM YYYY", "fr") == "Vendredi, 23 aoû 2024")
+
+#let spanish_date = datetime(year: 2023, month: 2, day: 23)
+#assert(custom-date-format(spanish_date, "day, DD de month de YYYY", "es") == "jueves, 23 de febrero de 2023")
+
+#let spanish_date = datetime(year: 2024, month: 8, day: 9)
+#assert(custom-date-format(spanish_date, "day, DD de month de YYYY", "es") == "viernes, 09 de agosto de 2024")
