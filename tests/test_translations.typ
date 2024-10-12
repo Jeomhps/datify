@@ -6,3 +6,5 @@
 #assert(month-name(1, "fr") == "janvier")
 #assert(day-name(1, "en", true) == "Monday")
 #assert(month-name(1, "en", true) == "January")
+#assert(day-name(1, "es") == "lunes")
+#assert(month-name(1, "es") == "enero")
