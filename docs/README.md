@@ -143,6 +143,7 @@ Here are some examples demonstrating the usage of the functions provided by the 
 #custom-date-format(my-date, "DD-MM-YYYY")  // Output: 25-12-2024
 #custom-date-format(my-date, "Day, DD Month YYYY", "fr")  // Output: Mercredi, 25 Décembre 2024
 #custom-date-format(my-date, "day, DD de month de YYYY", "es") // Output: miércoles, 25 de diciembre de 2024
+#custom-date-format(my-date, "day, DD de month de YYYY", "pt") // Output: terça-feira, 25 de dezembro de 2024
 
 #day-name(4)  // Output: thursday
 
@@ -283,7 +284,7 @@ Here are some examples demonstrating the usage of the functions provided by the 
 | pi             | ❌           |
 | pl             | ❌           |
 | ps             | ❌           |
-| pt             | ❌           |
+| pt             | ✅           |
 | qu             | ❌           |
 | rm             | ❌           |
 | rn             | ❌           |
