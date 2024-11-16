@@ -10,3 +10,5 @@
 #assert(month-name(1, "es") == "enero")
 #assert(day-name(1, "pt") == "segunda-feira")
 #assert(month-name(1, "pt") == "janeiro")
+#assert(day-name(7, "he") == "ראשון")
+#assert(month-name(1, "he") == "ינואר")

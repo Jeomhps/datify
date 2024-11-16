@@ -27,3 +27,9 @@
 
 #let portuguese_date = datetime(year: 2024, month: 7, day: 7)
 #assert(custom-date-format(portuguese_date, "day, DD de month de YYYY", "pt") == "domingo, 07 de julho de 2024")
+
+#let hebrew_date = datetime(year: 2024, month: 11, day: 23)
+#assert(custom-date-format(hebrew_date, "day, DD month, YYYY", "he") == "שבת, ה-23 לנובמבר, 2024")
+
+#let hebrew_date = datetime(year: 2024, month: 12, day: 7)
+#assert(custom-date-format(hebrew_date, "day, ה-DD ל-month, YYYY", "he") == "שבת, ה-07 לדצמבר, 2024")
