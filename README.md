@@ -210,7 +210,7 @@ Here are some examples demonstrating the usage of the functions provided by the 
 | gu             | ❌           |
 | gv             | ❌           |
 | ha             | ❌           |
-| he             | ❌           |
+| he             | ✅           |
 | hi             | ❌           |
 | ho             | ❌           |
 | hr             | ❌           |

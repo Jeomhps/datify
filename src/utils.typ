@@ -1,5 +1,5 @@
 #let first-letter-to-upper = (s) => {
-  upper(s.first()) + s.slice(1)
+  upper(s.first()) + s.codepoints().slice(1).join()
 }
 
 // Take a number as an input and a length,
