@@ -35,4 +35,4 @@
 #assert(custom-date-format(hebrew_date, "day, ה-DD לmonth, YYYY", "he") == "שבת, ה-07 לדצמבר, 2024")
 
 #let chinese_date = datetime(year: 2024, month: 5, day: 23)
-#assert(custom-date-format(chinese_date, "YYYY 年MMM DD 日 day", "zh") == "2024 年一月 11 日 星期四")
+#assert(custom-date-format(chinese_date, "YYYY 年MMMM DD 日，day", "zh") == "2024 年五月 11 日，星期四")
