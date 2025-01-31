@@ -51,3 +51,12 @@
 5 = "שישי"
 6 = "שבת"
 7 = "ראשון"
+
+[ca]
+1 = "dilluns"
+2 = "dimarts"
+3 = "dimecres"
+4 = "dijous"
+5 = "divendres"
+6 = "dissabte"
+7 = "diumenge"
