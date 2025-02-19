@@ -14,3 +14,6 @@
 #assert(month-name(1, "he") == "ינואר")
 #assert(day-name(1, "ca") == "dilluns")
 #assert(month-name(1, "ca") == "gener")
+#assert(day-name(1, "de-AT") == "montag")
+#assert(month-name(1, "de-AT") == "jänner")
+#assert(month-name(2, "de-AT") == "feber")
