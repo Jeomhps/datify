@@ -1,4 +1,4 @@
-#import "utils.typ": first-letter-to-upper, pad, safe-slice 
+#import "utils.typ": first-letter-to-upper, pad, safe-slice
 #import "translations.typ": month-name, day-name
 #import "config.typ": default-date-lang
 
@@ -8,7 +8,7 @@
 
   // Process variable arguments to extract lang
   for arg in args.pos() {
-    if type(arg) == "string" {
+    if type(arg) == str {
       lang = arg
     }
   }
@@ -18,13 +18,13 @@
   let month = pad(date.month(), 2)
   let year = str(date.year())
   let weekday = date.weekday()
-  
+
   let short-year = year.slice(-2)
-  
+
   // Uses the name function to return name in the correct languages
   let full-day = day-name(int(weekday), lang)
   let full-month = month-name(int(month), lang)
-  
+
   // Correct name for the language with and uppercase at the start
   let capitalized-day = first-letter-to-upper(full-day)
   let capitalized-month = first-letter-to-upper(full-month)
@@ -32,7 +32,7 @@
   // Correct name for the language fully written in uppercase
   let uppercase-day = upper(full-day)
   let uppercase-month = upper(full-month)
-  
+
   // Short name for months, i.e January = Jan
   let short-month-name =  if full-month.len() > 3 { safe-slice(full-month, 3) } else { full-month }
 
@@ -58,4 +58,3 @@
 
   return formatted
 }
-
