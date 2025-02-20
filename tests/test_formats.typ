@@ -27,3 +27,15 @@
 
 #let portuguese_date = datetime(year: 2024, month: 7, day: 7)
 #assert(custom-date-format(portuguese_date, "day, DD de month de YYYY", "pt") == "domingo, 07 de julho de 2024")
+
+#let hebrew_date = datetime(year: 2024, month: 11, day: 23)
+#assert(custom-date-format(hebrew_date, "day, ה-DD לmonth, YYYY", "he") == "שבת, ה-23 לנובמבר, 2024")
+
+#let hebrew_date = datetime(year: 2024, month: 12, day: 7)
+#assert(custom-date-format(hebrew_date, "day, ה-DD לmonth, YYYY", "he") == "שבת, ה-07 לדצמבר, 2024")
+
+#let catalan_date = datetime(year: 2024, month: 8, day: 9)
+#assert(custom-date-format(catalan_date, "divendres, DD d'month de YYYY", "ca") == "divendres, 09 d'agost de 2024")
+
+#let catalan_date = datetime(year: 2025, month: 1, day: 9)
+#assert(custom-date-format(catalan_date, "divendres, DD de month de YYYY", "ca") == "divendres, 09 de gener de 2025")

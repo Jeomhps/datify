@@ -42,3 +42,21 @@
 5 = "sexta-feira"
 6 = "sábado"
 7 = "domingo"
+
+[he]
+1 = "שני"
+2 = "שלישי"
+3 = "רביעי"
+4 = "חמישי"
+5 = "שישי"
+6 = "שבת"
+7 = "ראשון"
+
+[ca]
+1 = "dilluns"
+2 = "dimarts"
+3 = "dimecres"
+4 = "dijous"
+5 = "divendres"
+6 = "dissabte"
+7 = "diumenge"
