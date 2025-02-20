@@ -8,7 +8,7 @@
 
   // Process variable arguments to extract lang
   for arg in args.pos() {
-    if type(arg) == "string" {
+    if type(arg) == str {
       lang = arg
     }
   }
