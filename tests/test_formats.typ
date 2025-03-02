@@ -1,6 +1,6 @@
 // To compile this file : typst compile --root .. .\test_formats.typ
 
-#import "../src/formats.typ": custom-date-format 
+#import "../src/formats.typ": custom-date-format
 
 #let date = datetime(year: 2024, month: 8, day: 29)
 
@@ -39,3 +39,6 @@
 
 #let catalan_date = datetime(year: 2025, month: 1, day: 9)
 #assert(custom-date-format(catalan_date, "divendres, DD de month de YYYY", "ca") == "divendres, 09 de gener de 2025")
+
+#let german_austrian_date = datetime(year: 2025, month: 1, day: 9)
+#assert(custom-date-format(german_austrian_date, "Month DD, YYYY", "de-AT") == "Jänner 09, 2025")

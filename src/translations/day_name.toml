@@ -25,6 +25,15 @@
 6 = "samstag"
 7 = "sonntag"
 
+[de-AT]
+1 = "montag"
+2 = "dienstag"
+3 = "mittwoch"
+4 = "donnerstag"
+5 = "freitag"
+6 = "samstag"
+7 = "sonntag"
+
 [es]
 1 = "lunes"
 2 = "martes"
