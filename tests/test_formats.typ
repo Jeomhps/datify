@@ -10,6 +10,12 @@
 #assert(custom-date-format(date, "month DD, YYYY") == "august 29, 2024")
 #assert(custom-date-format(date, "month DDth, YYYY") == "august 29th, 2024")
 
+#let shortdate = datetime(year: 2025, month: 4, day: 4)
+
+#assert(custom-date-format(shortdate, "dD. MM. YYYY") == "4. 04. 2025")
+#assert(custom-date-format(shortdate, "DD. mM. YYYY") == "04. 4. 2025")
+#assert(custom-date-format(shortdate, "dD. mM. YYYY") == "4. 4. 2025")
+
 #let french_date = datetime(year: 2024, month: 5, day: 23)
 #assert(custom-date-format(french_date, "Day, DD Month YYYY", "fr") == "Jeudi, 23 Mai 2024")
 
