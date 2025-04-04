@@ -9,6 +9,7 @@
 #assert(custom-date-format(date, "Month DD, YYYY") == "August 29, 2024")
 #assert(custom-date-format(date, "month DD, YYYY") == "august 29, 2024")
 #assert(custom-date-format(date, "month DDth, YYYY") == "august 29th, 2024")
+#assert(custom-date-format(date, "YYYY-mM-dD") == "2024-8-29")
 
 #let shortdate = datetime(year: 2025, month: 4, day: 4)
 
