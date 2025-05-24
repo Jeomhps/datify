@@ -19,6 +19,8 @@
   let year = str(date.year())
   let weekday = date.weekday()
 
+  let short-day = str(date.day())
+  let short-month = str(date.month())
   let short-year = year.slice(-2)
 
   // Uses the name function to return name in the correct languages
@@ -40,6 +42,7 @@
   let formatted = format
     // Day formats
     .replace("DD", day)
+    .replace("dD", short-day)
     .replace("day", full-day)
     .replace("Day", capitalized-day)
     .replace("DAY", uppercase-day)
@@ -48,6 +51,7 @@
     .replace("MMMM", capitalized-month)
     .replace("MMM", short-month-name)
     .replace("MM", month)
+    .replace("mM", short-month)
     .replace("month", full-month)
     .replace("Month", capitalized-month)
     .replace("MONTH", uppercase-month)
