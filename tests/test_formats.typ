@@ -49,3 +49,17 @@
 
 #let german_austrian_date = datetime(year: 2025, month: 1, day: 9)
 #assert(custom-date-format(german_austrian_date, "Month DD, YYYY", "de-AT") == "Jänner 09, 2025")
+
+// Russian
+#let russian_date = datetime(year: 2024, month: 11, day: 23)
+#assert(custom-date-format(russian_date, "day, DD month YYYY", "ru") == "суббота, 23 ноября 2024")
+
+#let russian_date = datetime(year: 2024, month: 12, day: 7)
+#assert(custom-date-format(russian_date, "day, DD month YYYY", "ru") == "суббота, 07 декабря 2024")
+
+// Dutch
+#let dutch_date = datetime(year: 2024, month: 11, day: 23)
+#assert(custom-date-format(dutch_date, "day, DD month YYYY", "nl") == "zaterdag, 23 november 2024")
+
+#let dutch_date = datetime(year: 2024, month: 12, day: 7)
+#assert(custom-date-format(dutch_date, "day, DD month YYYY", "nl") == "zaterdag, 07 december 2024")
