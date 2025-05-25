@@ -271,7 +271,7 @@ Here are some examples demonstrating the usage of the functions provided by the 
 | nd             | ❌           |
 | ne             | ❌           |
 | ng             | ❌           |
-| nl             | ❌           |
+| nl             | ✅           |
 | nn             | ❌           |
 | no             | ❌           |
 | nr             | ❌           |
@@ -291,7 +291,7 @@ Here are some examples demonstrating the usage of the functions provided by the 
 | rm             | ❌           |
 | rn             | ❌           |
 | ro             | ❌           |
-| ru             | ❌           |
+| ru             | ✅           |
 | rw             | ❌           |
 | sa             | ❌           |
 | sc             | ❌           |
