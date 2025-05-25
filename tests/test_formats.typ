@@ -1,6 +1,6 @@
 // To compile this file : typst compile --root .. .\test_formats.typ
 
-#import "../src/formats.typ": custom-date-format 
+#import "../src/formats.typ": custom-date-format
 
 #let date = datetime(year: 2024, month: 8, day: 29)
 
@@ -9,6 +9,13 @@
 #assert(custom-date-format(date, "Month DD, YYYY") == "August 29, 2024")
 #assert(custom-date-format(date, "month DD, YYYY") == "august 29, 2024")
 #assert(custom-date-format(date, "month DDth, YYYY") == "august 29th, 2024")
+#assert(custom-date-format(date, "YYYY-mM-dD") == "2024-8-29")
+
+#let shortdate = datetime(year: 2025, month: 4, day: 4)
+
+#assert(custom-date-format(shortdate, "dD. MM. YYYY") == "4. 04. 2025")
+#assert(custom-date-format(shortdate, "DD. mM. YYYY") == "04. 4. 2025")
+#assert(custom-date-format(shortdate, "dD. mM. YYYY") == "4. 4. 2025")
 
 #let french_date = datetime(year: 2024, month: 5, day: 23)
 #assert(custom-date-format(french_date, "Day, DD Month YYYY", "fr") == "Jeudi, 23 Mai 2024")
@@ -33,3 +40,12 @@
 
 #let hebrew_date = datetime(year: 2024, month: 12, day: 7)
 #assert(custom-date-format(hebrew_date, "day, ה-DD לmonth, YYYY", "he") == "שבת, ה-07 לדצמבר, 2024")
+
+#let catalan_date = datetime(year: 2024, month: 8, day: 9)
+#assert(custom-date-format(catalan_date, "divendres, DD d'month de YYYY", "ca") == "divendres, 09 d'agost de 2024")
+
+#let catalan_date = datetime(year: 2025, month: 1, day: 9)
+#assert(custom-date-format(catalan_date, "divendres, DD de month de YYYY", "ca") == "divendres, 09 de gener de 2025")
+
+#let german_austrian_date = datetime(year: 2025, month: 1, day: 9)
+#assert(custom-date-format(german_austrian_date, "Month DD, YYYY", "de-AT") == "Jänner 09, 2025")

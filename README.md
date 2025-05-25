@@ -7,7 +7,7 @@ Datify is a simple date package that allows users to format dates in new ways an
 To include this package in your Typst project, add the following to your project file:
 
 ```typst
-#import "@preview/datify:0.1.3": day-name, month-name, custom-date-format
+#import "@preview/datify:0.1.4": day-name, month-name, custom-date-format
 ```
 
 ## Reference
@@ -19,7 +19,7 @@ Returns the name of the weekday.
 #### Example
 
 ```typst
-#import "@preview/datify:0.1.3": day-name
+#import "@preview/datify:0.1.4": day-name
 
 #day-name(2)
 #day-name(1,"fr",true)
@@ -53,7 +53,7 @@ Returns the name of the month.
 #### Example
 
 ```typst
-#import "@preview/datify:0.1.3": month-name
+#import "@preview/datify:0.1.4": month-name
 
 #month-name(2)
 #month-name(1, "fr", true)
@@ -87,7 +87,7 @@ Formats a given date according to a specified format and language.
 #### Example
 
 ```typst
-#import "@preview/datify:0.1.3": custom-date-format
+#import "@preview/datify:0.1.4": custom-date-format
 
 #let my-date = datetime(year: 2024, month: 8, day: 4)
 #custom-date-format(my-date, "MMMM DDth, YYYY")
@@ -120,12 +120,14 @@ Below is a table of all possible format types that can be used in the format str
 | Format | Description                            | Example       |
 |--------|----------------------------------------|---------------|
 | `DD`   | Day of the month, 2 digits             | 05            |
+| `dD`   | Day of the month, 1 digit              | 5             |
 | `day`  | Full name of the day                   | tuesday       |
 | `Day`  | Capitalized full name of the day       | Tuesday       |
 | `DAY`  | Uppercase full name of the day         | TUESDAY       |
 | `MMMM` | Capitalized full name of the month     | May           |
 | `MMM`  | Short name of the month (first 3 chars)| May           |
 | `MM`   | Month number, 2 digits                 | 05            |
+| `mM`   | Month number, 1 digit                  | 5             |
 | `month`| Full name of the month                 | may           |
 | `Month`| Capitalized full name of the month     | May           |
 | `MONTH`| Uppercase full name of the month       | MAY           |
@@ -176,7 +178,7 @@ Here are some examples demonstrating the usage of the functions provided by the 
 | bo             | ❌           |
 | br             | ❌           |
 | bs             | ❌           |
-| ca             | ❌           |
+| ca             | ✅           |
 | ce             | ❌           |
 | ch             | ❌           |
 | co             | ❌           |

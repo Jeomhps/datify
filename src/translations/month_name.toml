@@ -40,6 +40,20 @@
 11 = "november"
 12 = "dezember"
 
+[de-AT]
+1 = "jänner"
+2 = "feber"
+3 = "märz"
+4 = "april"
+5 = "mai"
+6 = "juni"
+7 = "juli"
+8 = "august"
+9 = "september"
+10 = "oktober"
+11 = "november"
+12 = "dezember"
+
 [es]
 1 = "enero"
 2 = "febrero"
@@ -81,3 +95,31 @@
 10 = "אוקטובר"
 11 = "נובמבר"
 12 = "דצמבר"
+
+[ca]
+1 = "gener"
+2 = "febrer"
+3 = "març"
+4 = "abril"
+5 = "maig"
+6 = "juny"
+7 = "juliol"
+8 = "agost"
+9 = "setembre"
+10 = "octubre"
+11 = "novembre"
+12 = "desembre"
+
+[nl]
+1 = "januari"
+2 = "februari"
+3 = "maart"
+4 = "april"
+5 = "mei"
+6 = "juni"
+7 = "juli"
+8 = "augustus"
+9 = "september"
+10 = "oktober"
+11 = "november"
+12 = "december"

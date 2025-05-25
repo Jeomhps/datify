@@ -8,9 +8,9 @@
   let lang = default-date-lang
   let upper = false
   for arg in args.pos() {
-    if type(arg) == "string" {
+    if type(arg) == str {
       lang = arg
-    } else if type(arg) == "boolean" {
+    } else if type(arg) == bool {
       upper = arg
     }
   }
@@ -27,9 +27,9 @@
   let lang = default-date-lang
   let upper = false
   for arg in args.pos() {
-    if type(arg) == "string" {
+    if type(arg) == str {
       lang = arg
-    } else if type(arg) == "boolean" {
+    } else if type(arg) == bool {
       upper = arg
     }
   }
