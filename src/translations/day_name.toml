@@ -25,6 +25,15 @@
 6 = "samstag"
 7 = "sonntag"
 
+[de-AT]
+1 = "montag"
+2 = "dienstag"
+3 = "mittwoch"
+4 = "donnerstag"
+5 = "freitag"
+6 = "samstag"
+7 = "sonntag"
+
 [es]
 1 = "lunes"
 2 = "martes"
@@ -51,3 +60,30 @@
 5 = "שישי"
 6 = "שבת"
 7 = "ראשון"
+
+[ru]
+1 = "понедельник"
+2 = "вторник"
+3 = "среда"
+4 = "четверг"
+5 = "пятница"
+6 = "суббота"
+7 = "воскресенье"
+
+[ca]
+1 = "dilluns"
+2 = "dimarts"
+3 = "dimecres"
+4 = "dijous"
+5 = "divendres"
+6 = "dissabte"
+7 = "diumenge"
+
+[nl]
+1 = "maandag"
+2 = "dinsdag"
+3 = "woensdag"
+4 = "donderdag"
+5 = "vrijdag"
+6 = "zaterdag"
+7 = "zondag"
