@@ -23,3 +23,7 @@
 #assert(month-name(1, "nl") == "januari")
 #assert(day-name(1, "de") == "montag")
 #assert(month-name(1, "de") == "januar")
+#assert(day-name(1, "it") == "lunedì")
+#assert(day-name(6, "it") == "sabato")
+#assert(month-name(1, "it") == "gennaio")
+#assert(month-name(5, "it") == "maggio")

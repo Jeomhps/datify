@@ -63,3 +63,10 @@
 
 #let dutch_date = datetime(year: 2024, month: 12, day: 7)
 #assert(custom-date-format(dutch_date, "day, DD month YYYY", "nl") == "zaterdag, 07 december 2024")
+
+// Italian [it]
+#let italian_date = datetime(year: 2017, month: 3, day: 14)
+#assert(custom-date-format(italian_date, "day, DD month YYYY", "it") == "martedì, 14 marzo 2017")
+
+#let italian_date = datetime(year: 2025, month: 6, day: 15)
+#assert(custom-date-format(italian_date, "Day DD month YYYY", "it") == "Domenica 15 giugno 2025")
