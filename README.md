@@ -228,7 +228,7 @@ Here are some examples demonstrating the usage of the functions provided by the 
 | ik             | ❌           |
 | io             | ❌           |
 | is             | ❌           |
-| it             | ❌           |
+| it             | ✅           |
 | iu             | ❌           |
 | ja             | ❌           |
 | jv             | ❌           |
