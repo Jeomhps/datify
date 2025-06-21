@@ -117,22 +117,23 @@ custom-date-format(date: datetime, format: str, lang: str = 'en') -> str
 
 Below is a table of all possible format types that can be used in the format string:
 
-| Format | Description                            | Example       |
-|--------|----------------------------------------|---------------|
-| `DD`   | Day of the month, 2 digits             | 05            |
-| `dD`   | Day of the month, 1 digit              | 5             |
-| `day`  | Full name of the day                   | tuesday       |
-| `Day`  | Capitalized full name of the day       | Tuesday       |
-| `DAY`  | Uppercase full name of the day         | TUESDAY       |
-| `MMMM` | Capitalized full name of the month     | May           |
-| `MMM`  | Short name of the month (first 3 chars)| May           |
-| `MM`   | Month number, 2 digits                 | 05            |
-| `mM`   | Month number, 1 digit                  | 5             |
-| `month`| Full name of the month                 | may           |
-| `Month`| Capitalized full name of the month     | May           |
-| `MONTH`| Uppercase full name of the month       | MAY           |
-| `YYYY` | 4-digit year                           | 2023          |
-| `YY`   | Last 2 digits of the year              | 23            |
+| Format | Description                                        | Example       |
+|--------|----------------------------------------------------|---------------|
+| `DD`   | Day of the month, 2 digits                         | 05            |
+| `dD`   | Day of the month, 1 digit                          | 5             |
+| `day`  | Full name of the day                               | tuesday       |
+| `Day`  | Capitalized full name of the day                   | Tuesday       |
+| `DAY`  | Uppercase full name of the day                     | TUESDAY       |
+| `MMMM` | Capitalized full name of the month                 | May           |
+| `MMM`  | Short name of the capitalized month (first 3 chars)| May           |
+| `mmm`  | Short name of the month (first 3 chars)            | may           |
+| `MM`   | Month number, 2 digits                             | 05            |
+| `mM`   | Month number, 1 digit                              | 5             |
+| `month`| Full name of the month                             | may           |
+| `Month`| Capitalized full name of the month                 | May           |
+| `MONTH`| Uppercase full name of the month                   | MAY           |
+| `YYYY` | 4-digit year                                       | 2023          |
+| `YY`   | Last 2 digits of the year                          | 23            |
 
 
 ## Examples
