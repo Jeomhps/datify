@@ -87,3 +87,12 @@
 5 = "vrijdag"
 6 = "zaterdag"
 7 = "zondag"
+
+[it]
+1 = "lunedì"
+2 = "martedì"
+3 = "mercoledì"
+4 = "giovedì"
+5 = "venerdì"
+6 = "sabato"
+7 = "domenica"
