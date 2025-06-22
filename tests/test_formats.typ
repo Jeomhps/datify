@@ -21,7 +21,10 @@
 #assert(custom-date-format(french_date, "Day, DD Month YYYY", "fr") == "Jeudi, 23 Mai 2024")
 
 #let french_date = datetime(year: 2024, month: 8, day: 23)
-#assert(custom-date-format(french_date, "Day, DD MMM YYYY", "fr") == "Vendredi, 23 aoû 2024")
+#assert(custom-date-format(french_date, "Day, DD mmm YYYY", "fr") == "Vendredi, 23 aoû 2024")
+
+#let french_date = datetime(year: 2024, month: 8, day: 23)
+#assert(custom-date-format(french_date, "Day, DD MMM YYYY", "fr") == "Vendredi, 23 Aoû 2024")
 
 #let spanish_date = datetime(year: 2023, month: 2, day: 23)
 #assert(custom-date-format(spanish_date, "day, DD de month de YYYY", "es") == "jueves, 23 de febrero de 2023")
@@ -63,3 +66,10 @@
 
 #let dutch_date = datetime(year: 2024, month: 12, day: 7)
 #assert(custom-date-format(dutch_date, "day, DD month YYYY", "nl") == "zaterdag, 07 december 2024")
+
+// Italian [it]
+#let italian_date = datetime(year: 2017, month: 3, day: 14)
+#assert(custom-date-format(italian_date, "day, DD month YYYY", "it") == "martedì, 14 marzo 2017")
+
+#let italian_date = datetime(year: 2025, month: 6, day: 15)
+#assert(custom-date-format(italian_date, "Day DD month YYYY", "it") == "Domenica 15 giugno 2025")
