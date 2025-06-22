@@ -67,6 +67,13 @@
 #let dutch_date = datetime(year: 2024, month: 12, day: 7)
 #assert(custom-date-format(dutch_date, "day, DD month YYYY", "nl") == "zaterdag, 07 december 2024")
 
+// Greek
+#let greek_date = datetime(year: 2024, month: 3, day: 4)
+#assert(custom-date-format(greek_date, "day, DD month YYYY", "el") == "δευτέρα, 04 μάρτιος 2024")
+
+#let greek_date = datetime(year: 2024, month: 8, day: 15)
+#assert(custom-date-format(greek_date, "day, DD month YYYY", "el") == "πέμπτη, 15 αύγουστος 2024")
+
 // Italian [it]
 #let italian_date = datetime(year: 2017, month: 3, day: 14)
 #assert(custom-date-format(italian_date, "day, DD month YYYY", "it") == "martedì, 14 marzo 2017")
