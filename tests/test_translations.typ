@@ -25,3 +25,7 @@
 #assert(month-name(1, "de") == "januar")
 #assert(day-name(1, "el") == "δευτέρα")
 #assert(month-name(1, "el") == "ιανουάριος")
+#assert(day-name(1, "it") == "lunedì")
+#assert(day-name(6, "it") == "sabato")
+#assert(month-name(1, "it") == "gennaio")
+#assert(month-name(5, "it") == "maggio")
