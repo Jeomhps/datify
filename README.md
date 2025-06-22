@@ -193,7 +193,7 @@ Here are some examples demonstrating the usage of the functions provided by the 
 | dv             | ❌           |
 | dz             | ❌           |
 | ee             | ❌           |
-| el             | ❌           |
+| el             | ✅           |
 | en             | ✅           |
 | eo             | ❌           |
 | es             | ✅           |
