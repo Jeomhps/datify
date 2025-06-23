@@ -19,3 +19,8 @@ if [ "$fail" -ne 0 ]; then
 else
   echo "All tests passed!"
 fi
+
+echo ""
+
+find . -type f -name "*.pdf" -delete
+echo "All PDF files in $(pwd) have been deleted."
