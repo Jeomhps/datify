@@ -352,7 +352,42 @@ Contributions are welcome! Please feel free to submit a pull request or open an 
 
 This project is licensed under the MIT License.
 
+## Test Coverage Generation
+
+To generate the Typst coverage test file from your translation TOML files, you need Python and the `toml` package.
+
+**Recommended: Use a Python virtual environment for isolation.**
+
+### 1. Create and activate a virtual environment (recommended for contributors)
+
+```sh
+python -m venv .venv
+# On Linux/macOS:
+source .venv/bin/activate
+# On Windows:
+.venv\Scripts\activate
+```
+
+### 2. Install dependencies
+
+```sh
+pip install toml
+```
+
+### 3. Generate the coverage test file
+
+```sh
+python tools/gen_typst_coverage.py
+```
+
+This will create or update `tests/test_generated_coverage.typ` with assertions for all translations and formats.
+
+**Note:** The `.venv/` directory is ignored by git (see `.gitignore`). All contributors should use a venv to avoid polluting the global Python environment.
+
+---
+
 ## Planned
 - Adding support for more language
 - Adding set and get method to set default language for a whole document
 - Adding new methods
+

@@ -23,6 +23,22 @@ jobs:
           sudo mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/
           typst --version
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies for coverage generation
+        run: |
+          python -m pip install --upgrade pip
+          pip install toml
+
+      - name: Generate Typst coverage tests
+        run: |
+          cd tools
+          python gen_typst_coverage.py
+          cd ..
+
       - name: Run Typst tests
         run: |
           cd tests

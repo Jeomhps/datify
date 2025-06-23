@@ -15,14 +15,13 @@
   return padding + str_num
 }
 
+// Take a string and a length, and return the first `length` grapheme clusters
+// (what a human sees as characters). If the string is shorter than `length`,
+// returns the whole string. This is Unicode-safe and works for non-Latin scripts.
+// Example: safe-slice("August", 3) -> "Aug"
+// Example: safe-slice("אוגוסט", 3) -> "אוגוס"
 #let safe-slice = (s, length) => {
-  let result = ""
-  for ch in s {
-    if result.len() < length {
-      result += ch
-    } else {
-      break
-    }
-  }
-  result
+  let clusters = s.clusters()
+  let n = if length > clusters.len() { clusters.len() } else { length }
+  clusters.slice(0, n).join()
 }
