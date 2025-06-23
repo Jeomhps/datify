@@ -1,5 +1,7 @@
 # Datify
 
+![Test Datify](https://github.com/Jeomhps/datify/actions/workflows/test.yml/badge.svg?branch=main)
+
 Datify is a simple date package that allows users to format dates in new ways and addresses the issue of lacking date formats in different languages.
 
 ## Installation
