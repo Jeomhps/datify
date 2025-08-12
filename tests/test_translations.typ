@@ -29,3 +29,7 @@
 #assert(day-name(6, "it") == "sabato")
 #assert(month-name(1, "it") == "gennaio")
 #assert(month-name(5, "it") == "maggio")
+#assert(day-name(1, "id") == "senin")
+#assert(day-name(6, "id") == "sabtu")
+#assert(month-name(1, "id") == "januari")
+#assert(month-name(5, "id") == "mei")
