@@ -105,3 +105,12 @@
 5 = "venerdì"
 6 = "sabato"
 7 = "domenica"
+
+[my]
+1 = "isnin"
+2 = "selasa"
+3 = "rabu"
+4 = "khamis"
+5 = "jumaat"
+6 = "sabtu"
+7 = "ahad"
