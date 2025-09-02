@@ -87,3 +87,10 @@
 #assert(custom-date-format(malay_date, "Day, DD Month YYYY", "my") == "Selasa, 19 Ogos 2025")
 #assert(custom-date-format(malay_date, "day, DD MMM YYYY", "my") == "selasa, 19 Ogo 2025")
 #assert(custom-date-format(malay_date, "day, DD mmm YYYY", "my") == "selasa, 19 ogo 2025")
+
+// Indonesian
+#let indonesian_date = datetime(year: 2025, month: 8, day: 12)
+#assert(custom-date-format(indonesian_date, "Day, DD Month YYYY", "id") == "Selasa, 12 Agustus 2025")
+
+#let indonesian_date = datetime(year: 2025, month: 9, day: 13)
+#assert(custom-date-format(indonesian_date, "Day, DD Month YYYY", "id") == "Sabtu, 13 September 2025")
