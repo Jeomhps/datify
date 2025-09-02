@@ -268,7 +268,7 @@ Here are some examples demonstrating the usage of the functions provided by the 
 | mr             | ❌           |
 | ms             | ❌           |
 | mt             | ❌           |
-| my             | ❌           |
+| my             | ✅           |
 | na             | ❌           |
 | nb             | ❌           |
 | nd             | ❌           |
