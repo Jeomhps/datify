@@ -224,7 +224,7 @@ Here are some examples demonstrating the usage of the functions provided by the 
 | hy             | ❌           |
 | hz             | ❌           |
 | ia             | ❌           |
-| id             | ❌           |
+| id             | ✅           |
 | ie             | ❌           |
 | ig             | ❌           |
 | ii             | ❌           |

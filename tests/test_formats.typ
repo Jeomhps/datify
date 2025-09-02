@@ -80,3 +80,10 @@
 
 #let italian_date = datetime(year: 2025, month: 6, day: 15)
 #assert(custom-date-format(italian_date, "Day DD month YYYY", "it") == "Domenica 15 giugno 2025")
+
+// Indonesian
+#let indonesian_date = datetime(year: 2025, month: 8, day: 12)
+#assert(custom-date-format(indonesian_date, "Day, DD Month YYYY", "id") == "Selasa, 12 Agustus 2025")
+
+#let indonesian_date = datetime(year: 2025, month: 9, day: 13)
+#assert(custom-date-format(indonesian_date, "Day, DD Month YYYY", "id") == "Sabtu, 13 September 2025")
