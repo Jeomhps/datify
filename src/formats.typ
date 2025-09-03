@@ -1,5 +1,4 @@
-#import "utils.typ": first-letter-to-upper, pad, safe-slice
-#import "translations.typ": month-name, day-name
+#import "@local/datify-core:1.0.0": *
 #import "config.typ": default-date-lang
 
 #let custom-date-format = (date, format, ..args) => {
@@ -36,19 +35,18 @@
   let uppercase-month = upper(full-month)
 
   // Short name for months, i.e January = Jan
-  let short-month-name =  if full-month.len() > 3 { safe-slice(full-month, 3) } else { full-month }
-  let short-capitalized-month-name =  if capitalized-month.len() > 3 { safe-slice(capitalized-month, 3) } else { capitalized-month }
+  let short-month-name = if full-month.len() > 3 { safe-slice(full-month, 3) } else { full-month }
+  let short-capitalized-month-name = if capitalized-month.len() > 3 { safe-slice(capitalized-month, 3) } else {
+    capitalized-month
+  }
 
   // Format the arg format in the right form and returns it.
-  let formatted = format
-    // Day formats
+  let formatted = format // Day formats
     .replace("DD", day)
     .replace("dD", short-day)
     .replace("day", full-day)
     .replace("Day", capitalized-day)
-    .replace("DAY", uppercase-day)
-
-    // Month formats
+    .replace("DAY", uppercase-day) // Month formats
     .replace("MMMM", capitalized-month)
     .replace("MMM", short-capitalized-month-name)
     .replace("mmm", short-month-name)
@@ -56,9 +54,7 @@
     .replace("mM", short-month)
     .replace("month", full-month)
     .replace("Month", capitalized-month)
-    .replace("MONTH", uppercase-month)
-
-    // Year formats
+    .replace("MONTH", uppercase-month) // Year formats
     .replace("YYYY", year)
     .replace("YY", short-year)
 
