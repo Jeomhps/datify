@@ -39,6 +39,12 @@ jobs:
           python gen_typst_coverage.py
           cd ..
 
+      - name: Install datify-core as a local Typst package
+        run: |
+          mkdir -p ~/.local/share/typst/packages/local/datify-core/1.0.0
+          git clone --depth 1 https://github.com/Jeomhps/datify-core.git temp-datify-core
+          cp -r temp-datify-core/* ~/.local/share/typst/packages/local/datify-core/1.0.0/
+
       - name: Run Typst tests
         run: |
           cd tests
