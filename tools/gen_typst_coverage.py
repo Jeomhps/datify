@@ -1,14 +1,18 @@
 import toml
+import requests
 from pathlib import Path
 
-# Paths
-day_file = Path("../src/translations/day_name.toml")
-month_file = Path("../src/translations/month_name.toml")
+# URLs for the TOML files in datify-core
+BASE_URL = "https://raw.githubusercontent.com/Jeomhps/datify-core/main/src/translations/"
+DAY_FILE_URL = BASE_URL + "day_name.toml"
+MONTH_FILE_URL = BASE_URL + "month_name.toml"
+
+# Output path for the generated Typst test file
 out_file = Path("../tests/test_generated_coverage.typ")
 
-# Load TOML
-day_trans = toml.load(day_file.open(encoding="utf-8"))
-month_trans = toml.load(month_file.open(encoding="utf-8"))
+# Fetch and parse the TOML files
+day_trans = toml.loads(requests.get(DAY_FILE_URL).text)
+month_trans = toml.loads(requests.get(MONTH_FILE_URL).text)
 
 lines = []
 lines.append("// Generated Typst coverage tests for all translations and formats")
