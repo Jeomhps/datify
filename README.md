@@ -1,3 +1,6 @@
+> **Disclaimer:**  
+> This project is currently undergoing a major restructuring. The translation and core logic are being moved to a separate repository (`datify-core`). During this transition, some features, tests, or documentation may be temporarily out of sync or require updated installation/import steps. Thank you for your understanding and patience!
+
 # Datify
 
 ![Test Datify](https://github.com/Jeomhps/datify/actions/workflows/test.yml/badge.svg?branch=main)
