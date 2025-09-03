@@ -16,7 +16,7 @@ month_trans = toml.loads(requests.get(MONTH_FILE_URL).text)
 
 lines = []
 lines.append("// Generated Typst coverage tests for all translations and formats")
-lines.append('#import "../src/translations.typ": day-name, month-name')
+lines.append('#import "@local/datify-core:1.0.0": day-name, month-name')
 lines.append('#import "../src/formats.typ": custom-date-format\n')
 
 # Days
