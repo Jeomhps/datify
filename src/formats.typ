@@ -6,11 +6,6 @@
   pattern: "full",
   lang: "en",
 ) => {
-  // Resolve named pattern if needed
-  if pattern == "full" or pattern == "long" or pattern == "medium" or pattern == "short" {
-    pattern = get-date-pattern(pattern, lang: lang)
-  }
-
   // Symbol lookup
   let symbol-values = (
     "EEEE": get-day-name(date.weekday(), lang: lang, type: "format", width: "wide"),
@@ -24,92 +19,49 @@
     "yyyy": str(date.year()),
     "y": str(date.year()),
   )
+  let tokens = ("EEEE", "MMMM", "yyyy", "EEE", "MMM", "MM", "dd", "M", "d", "y")
 
-  // Split pattern on whitespace to get tokens
-  let tokens = pattern.split(" ")
+  // If named pattern, resolve it
+  if pattern == "full" or pattern == "long" or pattern == "medium" or pattern == "short" {
+    pattern = get-date-pattern(pattern, lang: lang)
+  }
 
-  // Build result as a string
-  // let result = ""
-  // for i in range(tokens.len()) {
-  //   let token = tokens.at(i)
-  //   let found = false
-  //   // Replace each symbol in token, longest first
-  //   for key in ("EEEE", "MMMM", "yyyy", "EEE", "MMM", "MM", "dd", "M", "d", "y") {
-  //     if not found and token.contains(key) {
-  //       token = token.replace(key, symbol-values.at(key))
-  //       found = true
-  //     }
-  //   }
-  //   // Add space between tokens, but not after the last one
-  //   if i > 0 {
-  //     result += " "
-  //   }
-  //   result += token
-  // }
-  //
-  // let result = ""
-  //  for i in range(tokens.len()) {
-  //    let token = tokens.at(i)
-  //    if tokens.len() == 1 {
-  //      // Single-token: replace all symbols in order, no early stop
-  //      for key in ("EEEE", "MMMM", "yyyy", "EEE", "MMM", "MM", "dd", "M", "d", "y") {
-  //        if token.contains(key) {
-  //          token = token.replace(key, symbol-values.at(key))
-  //        }
-  //      }
-  //    } else {
-  //      let found = false
-  //      // Multi-token: stop after the first match
-  //      for key in ("EEEE", "MMMM", "yyyy", "EEE", "MMM", "MM", "dd", "M", "d", "y") {
-  //        if not found and token.contains(key) {
-  //          token = token.replace(key, symbol-values.at(key))
-  //          found = true
-  //        }
-  //      }
-  //    }
-  //    // Add space between tokens, but not after the last one
-  //    if i > 0 {
-  //      result += " "
-  //    }
-  //    result += token
-  //  }
-
-   let chunks = ()
-   let buffer = ""
-   let in_literal = false
-   for c in pattern.clusters() {
-     if c == "'" {
-       if buffer != "" {
-         chunks.push((in_literal, buffer))
-         buffer = ""
-       }
-       in_literal = not in_literal
-     } else {
-       buffer += c
-     }
-   }
-   if buffer != "" {
-     chunks.push((in_literal, buffer))
-   }
-
-   // Now process chunks
-   let result = ""
-   for (is_lit, chunk) in chunks {
-     if is_lit {
-       // Literal: append as-is (remove quotes)
-       result += chunk
-     } else {
-       // Non-literal: do symbol replacement
-       // Optionally: split on whitespace and use your multi-token logic, or just do a "global" replace
-       // Here's a "global" replace, longest key first:
-       for key in ("EEEE", "MMMM", "yyyy", "EEE", "MMM", "MM", "dd", "M", "d", "y") {
-         chunk = chunk.replace(key, symbol-values.at(key))
-       }
-       result += chunk
-     }
-   }
-   return result
- }
-
+  // Manual parsing for literals and tokenizing symbols
+  let result = ""
+  let in_literal = false
+  let i = 0
+  while i < pattern.len() {
+    let c = pattern.slice(i, i+1)
+    if c == "'" {
+      // Handle escaped quote
+      if i+1 < pattern.len() and pattern.slice(i+1, i+2) == "'" {
+        result += "'"
+        i += 2
+        continue
+      }
+      in_literal = not in_literal
+      i += 1
+      continue
+    }
+    if in_literal {
+      result += c
+      i += 1
+      continue
+    }
+    // Try to match any symbol at this position, longest first
+    let matched = false
+    for key in tokens {
+      if i + key.len() <= pattern.len() and pattern.slice(i, i + key.len()) == key {
+        result += symbol-values.at(key)
+        i += key.len()
+        matched = true
+        break
+      }
+    }
+    if not matched {
+      result += c
+      i += 1
+    }
+  }
   return result
 }
