@@ -1,62 +1,51 @@
 #import "@local/datify-core:1.0.0": *
-#import "config.typ": default-date-lang
+#import "utils.typ": *
 
-#let custom-date-format = (date, format, ..args) => {
-  // Default values
-  let lang = default-date-lang
+#let custom-date-format = (
+  date,
+  pattern: "full",
+  lang: "fr",
+) => {
+  // Resolve named pattern if needed
+  if pattern == "full" or pattern == "long" or pattern == "medium" or pattern == "short" {
+    pattern = get-date-pattern(pattern, lang: lang)
+  }
 
-  // Process variable arguments to extract lang
-  for arg in args.pos() {
-    if type(arg) == str {
-      lang = arg
+  // Symbol lookup
+  let symbol-values = (
+    "EEEE": get-day-name(date.weekday(), lang: lang, type: "format", width: "wide"),
+    "EEE": get-day-name(date.weekday(), lang: lang, type: "format", width: "abbreviated"),
+    "MMMM": get-month-name(date.month(), lang: lang, type: "format", width: "wide"),
+    "MMM": get-month-name(date.month(), lang: lang, type: "format", width: "abbreviated"),
+    "MM": pad(date.month(), 2),
+    "M": str(date.month()),
+    "dd": pad(date.day(), 2),
+    "d": str(date.day()),
+    "yyyy": str(date.year()),
+    "y": str(date.year()),
+  )
+
+  // Split pattern on whitespace to get tokens
+  let tokens = pattern.split(" ")
+
+  // Build result as a string
+  let result = ""
+  for i in range(tokens.len()) {
+    let token = tokens.at(i)
+    let found = false
+    // Replace each symbol in token, longest first
+    for key in ("EEEE", "MMMM", "yyyy", "EEE", "MMM", "MM", "dd", "M", "d", "y") {
+      if not found and token.contains(key) {
+        token = token.replace(key, symbol-values.at(key))
+        found = true
+      }
     }
+    // Add space between tokens, but not after the last one
+    if i > 0 {
+      result += " "
+    }
+    result += token
   }
 
-  // Take all the information, stock it and reformat it.
-  let day = pad(date.day(), 2)
-  let month = pad(date.month(), 2)
-  let year = str(date.year())
-  let weekday = date.weekday()
-
-  let short-day = str(date.day())
-  let short-month = str(date.month())
-  let short-year = year.slice(-2)
-
-  // Uses the name function to return name in the correct languages
-  let full-day = day-name(int(weekday), lang)
-  let full-month = month-name(int(month), lang)
-
-  // Correct name for the language with and uppercase at the start
-  let capitalized-day = first-letter-to-upper(full-day)
-  let capitalized-month = first-letter-to-upper(full-month)
-
-  // Correct name for the language fully written in uppercase
-  let uppercase-day = upper(full-day)
-  let uppercase-month = upper(full-month)
-
-  // Short name for months, i.e January = Jan
-  let short-month-name = if full-month.len() > 3 { safe-slice(full-month, 3) } else { full-month }
-  let short-capitalized-month-name = if capitalized-month.len() > 3 { safe-slice(capitalized-month, 3) } else {
-    capitalized-month
-  }
-
-  // Format the arg format in the right form and returns it.
-  let formatted = format // Day formats
-    .replace("DD", day)
-    .replace("dD", short-day)
-    .replace("day", full-day)
-    .replace("Day", capitalized-day)
-    .replace("DAY", uppercase-day) // Month formats
-    .replace("MMMM", capitalized-month)
-    .replace("MMM", short-capitalized-month-name)
-    .replace("mmm", short-month-name)
-    .replace("MM", month)
-    .replace("mM", short-month)
-    .replace("month", full-month)
-    .replace("Month", capitalized-month)
-    .replace("MONTH", uppercase-month) // Year formats
-    .replace("YYYY", year)
-    .replace("YY", short-year)
-
-  return formatted
+  return result
 }
