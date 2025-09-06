@@ -31,13 +31,13 @@ jobs:
       - name: Install Python dependencies for coverage generation
         run: |
           python -m pip install --upgrade pip
-          pip install toml requests
+          pip install toml requests PyICU
 
-      # - name: Generate Typst coverage tests
-      #   run: |
-      #     cd tools
-      #     python gen_typst_coverage.py
-      #     cd ..
+      - name: Generate Typst coverage tests
+        run: |
+          cd tools
+          python test.py
+          cd ..
 
       # --- Clone and install datify-core as a Typst local package ---
       - name: Clone datify-core repository
