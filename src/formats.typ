@@ -42,42 +42,57 @@
     pattern = get-date-pattern(pattern, lang: lang)
   }
 
-  // Manual parsing for literals and tokenizing symbols
+  // Parse the pattern string into the final result
   let result = ""
-  let in_literal = false
-  let i = 0
-  while i < pattern.clusters().len() {
-    let c = safe-slice(pattern, i, i+1)
-    if c == "'" {
-      // Handle escaped quote
-      if i+1 < pattern.clusters().len() and safe-slice(pattern, i+1, i+2) == "'" {
+  let in_literal_mode = false
+  let current_position = 0
+  let pattern_length = pattern.clusters().len()
+
+  while (current_position < pattern_length) {
+    let current_char = safe-slice(pattern, current_position, current_position + 1)
+
+    // Handle literal mode (quoted text)
+    if (current_char == "'") {
+      // Check for escaped quote (two single quotes in a row)
+      if (current_position + 1 < pattern_length and
+          safe-slice(pattern, current_position + 1, current_position + 2) == "'") {
         result += "'"
-        i += 2
+        current_position += 2
         continue
       }
-      in_literal = not in_literal
-      i += 1
+      // Toggle literal mode
+      in_literal_mode = not in_literal_mode
+      current_position += 1
       continue
     }
-    if in_literal {
-      result += c
-      i += 1
+
+    // In literal mode, append characters as-is
+    if (in_literal_mode) {
+      result += current_char
+      current_position += 1
       continue
     }
-    // Try to match any symbol at this position, longest first
-    let matched = false
-    for key in tokens {
-      if i + key.len() <= pattern.clusters().len() and safe-slice(pattern, i, i + key.len()) == key {
-        result += symbol-values.at(key)
-        i += key.len()
-        matched = true
+
+    // Try to match any token at the current position
+    let token_matched = false
+    for token in tokens {
+      let token_length = token.len()
+      // Check if the token matches the current position in the pattern
+      if (current_position + token_length <= pattern_length and
+          safe-slice(pattern, current_position, current_position + token_length) == token) {
+        result += symbol-values.at(token)
+        current_position += token_length
+        token_matched = true
         break
       }
     }
-    if not matched {
-      result += c
-      i += 1
+
+    // If no token matched, append the character as-is
+    if (not token_matched) {
+      result += current_char
+      current_position += 1
     }
   }
+
   return result
 }
