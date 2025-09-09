@@ -14,3 +14,9 @@
   }
   return padding + str_num
 }
+
+#let safe-slice = (s, start, end) => {
+  let clusters = s.clusters()
+  let n = if end > clusters.len() { clusters.len() } else { end }
+  return clusters.slice(start, n).join()
+}
