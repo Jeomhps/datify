@@ -80,5 +80,132 @@
     "zh-Hans-MO", "zh-Hans-MY", "zh-Hans-SG", "zh-Hant", "zh-Hant-HK", "zh-Hant-MO",
     "zh-Hant-MY", "zh-Latn", "zu"
   ) {
-    custom-date-format(datetime.today(), lang: lang)
-  }
+  custom-date-format(datetime.today(), lang: lang)
+}
+
+// custom-date-format: Invalid date type (not a datetime)
+#assert-panic(() => custom-date-format("not a datetime"))
+#assert.eq(
+  catch(() => custom-date-format("not a datetime")),
+  "panicked with: \"Invalid date: must be a datetime object, got string\""
+)
+#assert-panic(() => custom-date-format(123))
+#assert.eq(
+  catch(() => custom-date-format(123)),
+  "panicked with: \"Invalid date: must be a datetime object, got integer\""
+)
+#assert-panic(() => custom-date-format((1, 2, 3)))
+#assert.eq(
+  catch(() => custom-date-format((1, 2, 3))),
+  "panicked with: \"Invalid date: must be a datetime object, got array\""
+)
+#assert-panic(() => custom-date-format(auto))
+#assert.eq(
+  catch(() => custom-date-format(auto)),
+  "panicked with: \"Invalid date: must be a datetime object, got auto\""
+)
+
+// custom-date-format: Invalid pattern type (not a string)
+#assert-panic(() => custom-date-format(datetime.today(), pattern: 123))
+#assert.eq(
+  catch(() => custom-date-format(datetime.today(), pattern: 123)),
+  "panicked with: \"Invalid pattern: must be a string, got integer\""
+)
+#assert-panic(() => custom-date-format(datetime.today(), pattern: (1, 2)))
+#assert.eq(
+  catch(() => custom-date-format(datetime.today(), pattern: (1, 2))),
+  "panicked with: \"Invalid pattern: must be a string, got array\""
+)
+#assert-panic(() => custom-date-format(datetime.today(), pattern: auto))
+#assert.eq(
+  catch(() => custom-date-format(datetime.today(), pattern: auto)),
+  "panicked with: \"Invalid pattern: must be a string, got auto\""
+)
+
+// custom-date-format: Invalid language type (not a string)
+#assert-panic(() => custom-date-format(datetime.today(), lang: 123))
+#assert.eq(
+  catch(() => custom-date-format(datetime.today(), lang: 123)),
+  "panicked with: \"Invalid language: must be a string, got integer\""
+)
+#assert-panic(() => custom-date-format(datetime.today(), lang: (1, 2)))
+#assert.eq(
+  catch(() => custom-date-format(datetime.today(), lang: (1, 2))),
+  "panicked with: \"Invalid language: must be a string, got array\""
+)
+#assert-panic(() => custom-date-format(datetime.today(), lang: auto))
+#assert.eq(
+  catch(() => custom-date-format(datetime.today(), lang: auto)),
+  "panicked with: \"Invalid language: must be a string, got auto\""
+)
+
+// custom-date-format: Invalid language (unknown)
+#assert-panic(() => custom-date-format(datetime.today(), lang: "zz"))
+#assert.eq(
+  catch(() => custom-date-format(datetime.today(), lang: "zz")),
+  "panicked with: \"Unknown language: zz\""
+)
+
+// custom-date-format: Valid named patterns (should not panic)
+#assert.eq(
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "full", lang: "en"),
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "full", lang: "en")
+)
+#assert.eq(
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "long", lang: "en"),
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "long", lang: "en")
+)
+#assert.eq(
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "medium", lang: "en"),
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "medium", lang: "en")
+)
+#assert.eq(
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "short", lang: "en"),
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "short", lang: "en")
+)
+
+// custom-date-format: Valid custom patterns (should not panic)
+#assert.eq(
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "yyyy-MM-dd", lang: "en"),
+  "2025-09-09"
+)
+#assert.eq(
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "EEEE, MMMM d, yyyy", lang: "en"),
+  "Tuesday, September 9, 2025"
+)
+#assert.eq(
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "dd'th day of 'MMMM", lang: "en"),
+  "09th day of September"
+)
+
+// custom-date-format: Literal mode (quoted text)
+#assert.eq(
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "'year: 'yyyy", lang: "en"),
+  "year: 2025"
+)
+#assert.eq(
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "yyyy'/'MM'/'dd", lang: "en"),
+  "2025/09/09"
+)
+#assert.eq(
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "'it''s the' MMMM", lang: "en"),
+  "it's the September"
+)
+
+// custom-date-format: Escaped quotes
+#assert.eq(
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "'''quoted'''", lang: "en"),
+  "'quoted'"
+)
+
+// custom-date-format: Non-Latin script (e.g., Russian)
+#assert.eq(
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "full", lang: "ru"),
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "full", lang: "ru")
+)
+
+// custom-date-format: Edge case - empty pattern
+#assert.eq(
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), pattern: "", lang: "en"),
+  ""
+)
