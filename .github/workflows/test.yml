@@ -2,19 +2,19 @@ name: Test Datify
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - "**"
-  # pull_request:
-  #   branches:
-  #     - "**"
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout datify repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Install Typst CLI
@@ -24,34 +24,21 @@ jobs:
           sudo mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/
           typst --version
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Install tytanic
+        uses: taiki-e/cache-cargo-install-action@v2
         with:
-          python-version: "3.x"
+          tool: tytanic@0.2.2
 
-      - name: Install Python dependencies for coverage generation
-        run: |
-          python -m pip install --upgrade pip
-          pip install toml requests PyICU
+      - name: Run test suite
+        run: tt run
 
-      - name: Generate Typst coverage tests
-        run: |
-          cd tools
-          python test.py
-          cd ..
-
-      # --- Clone and install datify-core as a Typst local package ---
-      - name: Clone datify-core repository
-        run: |
-          git clone https://github.com/Jeomhps/datify-core.git
-
-      - name: Install datify-core as a local Typst package
-        run: |
-          mkdir -p ~/.local/share/typst/packages/local/datify-core/1.0.0
-          cp -r datify-core/* ~/.local/share/typst/packages/local/datify-core/1.0.0/
-
-      - name: Run Typst tests
-        run: |
-          cd tests
-          chmod +x compile_all_test.sh
-          ./compile_all_test.sh
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: artifacts
+          path: |
+            tests/**/diff/*.png
+            tests/**/out/*.png
+            tests/**/ref/*.png
+          retention-days: 5
