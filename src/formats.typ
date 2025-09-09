@@ -6,6 +6,11 @@
   pattern: "full",
   lang: "en",
 ) => {
+  // Validate date type (must be a datetime)
+  if type(date) != datetime {
+    panic("Invalid date: must be a datetime object, got " + str(type(date)))
+  }
+
   // Symbol lookup
   let symbol-values = (
     "EEEE": get-day-name(date.weekday(), lang: lang, usage: "format", width: "wide"),
@@ -19,6 +24,17 @@
     "yyyy": str(date.year()),
     "y": str(date.year()),
   )
+
+  // Validate pattern
+  if type(pattern) != str {
+    panic("Invalid pattern: must be a string, got " + str(type(pattern)))
+  }
+
+  // Validate lang
+  if type(lang) != str {
+    panic("Invalid language: must be a string, got " + str(type(lang)))
+  }
+
   let tokens = ("EEEE", "MMMM", "yyyy", "EEE", "MMM", "MM", "dd", "M", "d", "y")
 
   // If named pattern, resolve it
@@ -30,11 +46,11 @@
   let result = ""
   let in_literal = false
   let i = 0
-  while i < pattern.len() {
-    let c = pattern.slice(i, i+1)
+  while i < pattern.clusters().len() {
+    let c = safe-slice(pattern, i, i+1)
     if c == "'" {
       // Handle escaped quote
-      if i+1 < pattern.len() and pattern.slice(i+1, i+2) == "'" {
+      if i+1 < pattern.clusters().len() and safe-slice(pattern, i+1, i+2) == "'" {
         result += "'"
         i += 2
         continue
@@ -51,7 +67,7 @@
     // Try to match any symbol at this position, longest first
     let matched = false
     for key in tokens {
-      if i + key.len() <= pattern.len() and pattern.slice(i, i + key.len()) == key {
+      if i + key.len() <= pattern.clusters().len() and safe-slice(pattern, i, i + key.len()) == key {
         result += symbol-values.at(key)
         i += key.len()
         matched = true
