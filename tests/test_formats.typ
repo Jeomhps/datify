@@ -25,7 +25,7 @@
 
 // Spanish locale
 #let es_date = datetime(year: 2025, month: 4, day: 7)
-#assert(custom-date-format(es_date, pattern: "EEEE, dd 'de' MMMM 'de' yyyy", lang: "es") == "lunes, 07 de abril de 2025")
+#assert(custom-date-format(es_date, pattern: "full", lang: "es") == "lunes, 7 de abril de 2025")
 #assert(custom-date-format(es_date, pattern: "EEE, d MMM yyyy", lang: "es") == "lun, 7 abr 2025")
 
 // Portuguese locale

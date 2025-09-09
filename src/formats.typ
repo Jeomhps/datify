@@ -1,4 +1,4 @@
-#import "@local/datify-core:1.0.0": *
+#import "@preview/datify-core:1.0.0": *
 #import "utils.typ": *
 
 #let custom-date-format = (
@@ -8,10 +8,10 @@
 ) => {
   // Symbol lookup
   let symbol-values = (
-    "EEEE": get-day-name(date.weekday(), lang: lang, type: "format", width: "wide"),
-    "EEE": get-day-name(date.weekday(), lang: lang, type: "format", width: "abbreviated"),
-    "MMMM": get-month-name(date.month(), lang: lang, type: "format", width: "wide"),
-    "MMM": get-month-name(date.month(), lang: lang, type: "format", width: "abbreviated"),
+    "EEEE": get-day-name(date.weekday(), lang: lang, usage: "format", width: "wide"),
+    "EEE": get-day-name(date.weekday(), lang: lang, usage: "format", width: "abbreviated"),
+    "MMMM": get-month-name(date.month(), lang: lang, usage: "format", width: "wide"),
+    "MMM": get-month-name(date.month(), lang: lang, usage: "format", width: "abbreviated"),
     "MM": pad(date.month(), 2),
     "M": str(date.month()),
     "dd": pad(date.day(), 2),
