@@ -11,6 +11,16 @@
     panic("Invalid date: must be a datetime object, got " + str(type(date)))
   }
 
+  // Validate pattern
+  if type(pattern) != str {
+    panic("Invalid pattern: must be a string, got " + str(type(pattern)))
+  }
+
+  // Validate lang
+  if type(lang) != str {
+    panic("Invalid language: must be a string, got " + str(type(lang)))
+  }
+
   // Symbol lookup
   let symbol-values = (
     "EEEE": get-day-name(date.weekday(), lang: lang, usage: "format", width: "wide"),
@@ -24,16 +34,6 @@
     "yyyy": str(date.year()),
     "y": str(date.year()),
   )
-
-  // Validate pattern
-  if type(pattern) != str {
-    panic("Invalid pattern: must be a string, got " + str(type(pattern)))
-  }
-
-  // Validate lang
-  if type(lang) != str {
-    panic("Invalid language: must be a string, got " + str(type(lang)))
-  }
 
   let tokens = ("EEEE", "MMMM", "yyyy", "EEE", "MMM", "MM", "dd", "M", "d", "y")
 
