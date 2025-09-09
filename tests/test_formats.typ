@@ -1,6 +1,5 @@
 // To compile this file: typst compile --root .. tests/test_cldr_formats.typ
-
-#import "../src/formats.typ": custom-date-format
+#import "/src/formats.typ": custom-date-format
 
 #let date = datetime(year: 2025, month: 1, day: 5) // January 5, 2025
 
@@ -46,5 +45,3 @@
 // Leap year check
 #let leap_date = datetime(year: 2024, month: 2, day: 29)
 #assert(custom-date-format(leap_date, pattern: "yyyy-MM-dd") == "2024-02-29")
-
-// Add more locales and patterns as needed!
