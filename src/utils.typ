@@ -1,7 +1,3 @@
-#let first-letter-to-upper = (s) => {
-  upper(s.first()) + s.clusters().slice(1).join()
-}
-
 // Take a number as an input and a length,
 // if number is not as big as length, return the number
 // with 0 padding in front, like 9 with length 2
