@@ -2,15 +2,18 @@
 
 ![Test Datify](https://github.com/Jeomhps/datify/actions/workflows/test.yml/badge.svg?branch=main)
 
-> **⚠️ Major Breaking Changes in v0.1.4+**  
-> Datify has been completely rewritten.  
-> - The old API (`day-name`, `month-name`, etc.) no longer exists.
-> - The `custom-date-format` function has a new signature and new format tokens.
-> - Positional arguments are no longer supported.
-> - If you are migrating from a previous version, you **must update your code**.  
-> - The old usage is **not compatible** with this version.
+> **⚠️ Major Breaking Changes in v1.0.0+**
 >
-> Please read this README carefully to update your usage.
+> - The user-facing API of Datify has been completely rewritten.
+> - Functions like `day-name`, `month-name`, etc. are **no longer available directly in Datify**.  
+>   They have been moved to [datify-core](https://github.com/Jeomhps/datify-core), which Datify uses as its backend.
+> - The new backend is based on the [Unicode CLDR project](https://cldr.unicode.org/), providing robust internationalization.
+> - If you need to resolve a single day or month name, it is recommended to use `datify-core` directly.  
+>   You can also use `custom-date-format` for this, but it is less practical for single values.
+> - The core logic for string transformation now uses a formal language and automata approach, similar to many modern date libraries.  
+>   This introduces a new quoting system for escaping text in patterns.
+> - **If you are migrating from a previous version, your code will need to be updated.**  
+>   The old usage is not compatible with this version.
 
 ---
 
@@ -40,49 +43,70 @@ It leverages [datify-core](https://github.com/Jeomhps/datify-core) for internati
 
 ## Installation
 
-Add Datify to your Typst project:
+Add Datify to your Typst project (specify the version you want):
 
 ```typst
-#import "@preview/datify:0.1.4": custom-date-format
+#import "@preview/datify:1.0.0": *
 ```
 
 ---
 
 ## Usage
 
-### Formatting Dates
+### Function Reference
 
-The main entrypoint is `custom-date-format`.  
-It formats a `datetime` object according to a pattern and language.
+| Argument | Type      | Required | Default | Description                                      |
+|----------|-----------|----------|---------|--------------------------------------------------|
+| date     | datetime  | Yes      | –       | The date to format                               |
+| pattern  | str       | No       | "full"  | Pattern string or CLDR named pattern             |
+| lang     | str       | No       | "en"    | ISO 639-1 language code (e.g., "en", "fr", "es") |
+
+**If you only provide `lang`, the pattern defaults to `"full"` for that locale. All arguments must be named except for the first (`date`).**
+
+#### Example usage
+
+```typst
+#let mydate = datetime(year: 2025, month: 1, day: 5)
+#custom-date-format(mydate)
+#custom-date-format(mydate, lang: "es")
+#custom-date-format(mydate, pattern: "yyyy-MM-dd")
+#custom-date-format(mydate, pattern: "full", lang: "fr")
+```
 
 #### Example
 
 ```typst
-#import "@preview/datify:0.1.4": custom-date-format
-
-#let my-date = datetime(year: 2025, month: 1, day: 5)
-#custom-date-format(my-date, pattern: "EEEE, MMMM dd, yyyy") 
-// Output: Sunday, January 05, 2025
-
-#custom-date-format(my-date, pattern: "dd/MM/yyyy", lang: "fr")
-// Output: 05/01/2025
+#let mydate = datetime(year: 2025, month: 1, day: 5)
+#custom-date-format(mydate) // Output: Sunday, January 5, 2025 (in English, full format)
+#custom-date-format(mydate, lang: "es") // Output: domingo, 5 de enero de 2025
+#custom-date-format(mydate, pattern: "yyyy-MM-dd") // Output: 2025-01-05
 ```
 
-#### Signature
+---
+
+### Pattern Syntax
+
+- The `pattern` argument can be either:
+  - A **CLDR named pattern** (`"full"`, `"long"`, `"medium"`, `"short"`) for locale-appropriate formatting.
+  - A **custom string pattern** using the tokens below.
+
+#### CLDR Pattern Example
 
 ```typst
-custom-date-format(date: datetime, pattern: str = "full", lang: str = "en") -> str
+#custom-date-format(mydate, pattern: "full", lang: "fr")
+// Output: dimanche 5 janvier 2025
 ```
 
-- `date`: The date to format (must be a Typst `datetime` object)
-- `pattern`: The format string (see [Format Tokens](#format-tokens) below)
-- `lang`: ISO 639-1 language code (e.g., `"en"`, `"fr"`, `"es"`)
+#### Custom Pattern Example
+
+```typst
+#custom-date-format(mydate, pattern: "EEEE, MMMM dd, yyyy")
+// Output: Sunday, January 05, 2025
+```
 
 ---
 
 ### Format Tokens
-
-The following tokens are supported in the pattern string:
 
 | Token   | Description                        | Example Output      |
 |---------|------------------------------------|---------------------|
@@ -97,18 +121,32 @@ The following tokens are supported in the pattern string:
 | `yyyy`  | 4-digit year                       | 2025                |
 | `y`     | Year (same as `yyyy`)              | 2025                |
 
-**Note:**  
-- Tokens are case-sensitive.
+- **Tokens are case-sensitive.**
 - Only the tokens above are supported.
 
-#### Example Patterns
+---
 
-```typst
-#custom-date-format(my-date, pattern: "yyyy-MM-dd") // 2025-01-05
-#custom-date-format(my-date, pattern: "EEE, MMM d, yyyy") // Sun, Jan 5, 2025
-```
+### Named Patterns (CLDR)
+
+- `"full"`, `"long"`, `"medium"`, `"short"` are mapped to locale-specific patterns using CLDR data.
+- This is a major improvement over previous versions and ensures internationalization best practices.
 
 ---
+
+### Literal Text & Escaping
+
+- To include literal text in your pattern, wrap it in single quotes (`'`).
+- To include a single quote, use two single quotes (`''`).
+- **While you can sometimes include text without quotes, it is strongly recommended to quote any literal text to avoid accidental transformation by the pattern parser.**
+- The new parser uses a formal automata-based approach, similar to many modern date libraries, which is why quoting is important.
+
+#### Examples
+
+```typst
+#custom-date-format(mydate, pattern: "'Today is' EEEE") // Today is Sunday
+#custom-date-format(mydate, pattern: "yyyy'/'MM'/'dd") // 2025/01/05
+#custom-date-format(mydate, pattern: "'''quoted'''")   // 'quoted'
+```
 
 ### Named Patterns
 
