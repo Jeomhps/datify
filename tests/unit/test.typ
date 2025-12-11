@@ -218,6 +218,7 @@
 #assert(custom-date-format(date, pattern: "MM/dd/yyyy") == "01/05/2025")
 #assert(custom-date-format(date, pattern: "d/M/yyyy") == "5/1/2025")
 #assert(custom-date-format(date, pattern: "yyyy-M-d") == "2025-1-5")
+#assert(custom-date-format(date, pattern: "short", lang: "de") == "05.01.25")
 
 // Month and day names (English, default)
 #assert(custom-date-format(date, pattern: "MMMM dd, yyyy") == "January 05, 2025")
