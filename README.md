@@ -124,6 +124,7 @@ The `pattern` argument can be either:
 | `dd`   | Day of month, 2 digits   | 05             |
 | `d`    | Day of month, 1-2 digits | 5              |
 | `yyyy` | 4-digit year             | 2025           |
+| `yy`    | Year (same as `yyyy`)    | 2025           |
 | `y`    | Year (same as `yyyy`)    | 2025           |
 
 - **Tokens are case-sensitive.**
