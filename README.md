@@ -58,7 +58,7 @@ internationalization and supports CLDR-style date patterns.
 Add Datify to your Typst project (specify the version you want):
 
 ```typst
-#import "@preview/datify:1.0.0": *
+#import "@preview/datify:1.0.1": *
 ```
 
 ---
