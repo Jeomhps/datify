@@ -10,7 +10,7 @@
 >   [datify-core](https://github.com/Jeomhps/datify-core), which Datify uses as
 >   its backend. Example migration:
 >   ```typst
->   #import "@preview/datify-core:1.0.0": *
+>   #import "@preview/datify-core:2.0.0": *
 >   #get-day-name(datetime.today().weekday(), lang: "en") // Now available in datify-core
 >   ```
 > - The new backend is based on the
@@ -24,6 +24,13 @@
 >   new quoting system for escaping text in patterns.
 > - **If you are migrating from a previous version, your code will need to be
 >   updated.** The old usage is not compatible with this version.
+>
+> **v1.1.0** adopts `datify-core` 2.0.0: per-locale lazy loading and a CLDR
+> fallback chain, so unknown or region-specific language codes now **fall back**
+> (e.g. `fr-CA` → `fr`, unknown → `en`) instead of erroring. Adds stand-alone
+> weekday/month support (`c` / `L`). The era field `G` remains unsupported and
+> passes through verbatim. These changes are backward-compatible: the public API
+> is unchanged and existing patterns format identically.
 
 ---
 
@@ -58,7 +65,7 @@ internationalization and supports CLDR-style date patterns.
 Add Datify to your Typst project (specify the version you want):
 
 ```typst
-#import "@preview/datify:1.0.1": *
+#import "@preview/datify:1.1.0": *
 ```
 
 ---
@@ -113,22 +120,30 @@ The `pattern` argument can be either:
 
 ### Format Tokens
 
-| Token  | Description              | Example Output |
-| ------ | ------------------------ | -------------- |
-| `EEEE` | Full weekday name        | Sunday         |
-| `EEE`  | Abbreviated weekday name | Sun            |
-| `MMMM` | Full month name          | January        |
-| `MMM`  | Abbreviated month name   | Jan            |
-| `MM`   | Month number, 2 digits   | 01             |
-| `M`    | Month number, 1-2 digits | 1              |
-| `dd`   | Day of month, 2 digits   | 05             |
-| `d`    | Day of month, 1-2 digits | 5              |
-| `yyyy` | 4-digit year             | 2025           |
-| `yy`    | Year (same as `yyyy`)    | 2025           |
-| `y`    | Year (same as `yyyy`)    | 2025           |
+| Token       | Description                            | Example Output |
+| ----------- | -------------------------------------- | -------------- |
+| `EEEE`      | Full weekday name (format)             | Sunday         |
+| `E`–`EEE`   | Abbreviated weekday name (format)      | Sun            |
+| `cccc`      | Full weekday name (stand-alone)        | Sunday         |
+| `c`–`ccc`   | Abbreviated weekday name (stand-alone) | Sun            |
+| `MMMM`      | Full month name (format)               | January        |
+| `MMM`       | Abbreviated month name (format)        | Jan            |
+| `LLLL`      | Full month name (stand-alone)          | January        |
+| `LLL`       | Abbreviated month name (stand-alone)   | Jan            |
+| `MM` / `LL` | Month number, 2 digits                 | 01             |
+| `M` / `L`   | Month number, 1–2 digits               | 1              |
+| `dd`        | Day of month, 2 digits                 | 05             |
+| `d`         | Day of month, 1–2 digits               | 5              |
+| `yyyy` / `y`| Year                                   | 2025           |
+| `yy`        | Year, last two digits                  | 25             |
 
 - **Tokens are case-sensitive.**
-- Only the tokens above are supported.
+- Patterns are parsed by scanning maximal runs of the same letter, so any run
+  length works — the 5-letter narrow forms (`MMMMM`, `EEEEE`, `ccccc`, `LLLLL`)
+  map to the locale's narrow width.
+- **Unhandled field symbols pass through verbatim.** In particular the era
+  field `G` is **not supported** (datify-core ships no era data), so it is
+  emitted literally; this affects only the Thai (`th`) `full`/`long` patterns.
 
 ---
 
@@ -169,7 +184,10 @@ versions.
 
 Datify supports all languages provided by
 [datify-core](https://github.com/Jeomhps/datify-core?tab=readme-ov-file#supported-locales).
-If you pass an unsupported language code, an error will be thrown.
+Region-specific or unknown codes resolve through datify-core's CLDR fallback
+chain: the trailing subtags are dropped one at a time (e.g. `fr-CA` → `fr`), and
+anything still unresolved falls back to the default locale (`en`). Formatting
+therefore never errors on an unrecognized language code.
 
 ---
 
@@ -205,6 +223,23 @@ To run the full test suite locally, you have two options:
    ```sh
    act --artifact-server-path /tmp/artifact
    ```
+
+### Developing against a local `datify-core`
+
+Datify depends on the published `@preview/datify-core`. To iterate on both
+packages together before publishing, make your local `datify-core` checkout
+resolvable under the same namespace by linking it into Typst's local package
+directory (it overrides the downloaded copy of that version):
+
+```sh
+# Linux/macOS — adjust the version to match the pin in src/formats.typ
+DEST="${XDG_DATA_HOME:-$HOME/.local/share}/typst/packages/preview/datify-core/2.0.0"
+mkdir -p "$DEST"
+cp -r /path/to/datify-core/typst.toml /path/to/datify-core/src "$DEST"/
+```
+
+Re-run the copy after each change to `datify-core`, then `tt run` here picks up
+the local version. (On Windows the package dir is `%APPDATA%\typst\packages`.)
 
 ---
 
