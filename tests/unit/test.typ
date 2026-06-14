@@ -241,6 +241,16 @@
 #let pt_date = datetime(year: 2025, month: 10, day: 3)
 #assert(custom-date-format(pt_date, pattern: "EEEE, dd 'de' MMMM 'de' yyyy", lang: "pt") == "sexta-feira, 03 de outubro de 2025")
 
+// Stand-alone weekday (c). These locales' `full` pattern begins with `cccc`,
+// which previously emitted the literal text "cccc". 2025-09-09 is a Tuesday.
+#let c_date = datetime(year: 2025, month: 9, day: 9)
+// Direct cccc -> stand-alone wide weekday
+#assert(custom-date-format(c_date, pattern: "cccc", lang: "fi") == "tiistai")
+// Finnish `full` = "cccc d. MMMM y"
+#assert(custom-date-format(c_date, pattern: "full", lang: "fi") == "tiistai 9. syyskuuta 2025")
+// Inari Sami `full` = "cccc, MMMM d. y"
+#assert(custom-date-format(c_date, pattern: "full", lang: "smn") == "majebargâ, čohčâmáánu 9. 2025")
+
 // Zero-padding edge case
 #let pad_date = datetime(year: 2025, month: 2, day: 3)
 #assert(custom-date-format(pad_date, pattern: "MM-dd") == "02-03")
