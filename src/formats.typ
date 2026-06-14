@@ -1,4 +1,4 @@
-#import "@preview/datify-core:1.0.0": *
+#import "@preview/datify-core:2.0.0": *
 #import "utils.typ": *
 
 #let custom-date-format = (

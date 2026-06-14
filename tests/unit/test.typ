@@ -139,11 +139,11 @@
   "panicked with: \"Invalid language: must be a string, got auto\""
 )
 
-// custom-date-format: Invalid language (unknown)
-#assert-panic(() => custom-date-format(datetime.today(), lang: "zz"))
+// custom-date-format: Unknown language now falls back to the default locale
+// (en) via datify-core's fallback chain instead of panicking.
 #assert.eq(
-  catch(() => custom-date-format(datetime.today(), lang: "zz")),
-  "panicked with: \"Unknown language: zz\""
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), lang: "zz"),
+  custom-date-format(datetime(year: 2025, month: 9, day: 9), lang: "en")
 )
 
 // custom-date-format: Valid named patterns (should not panic)
