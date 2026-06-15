@@ -22,6 +22,8 @@
 
 = display-date (document language)
 
-#[#set text(lang: "fr"); #display-date(d)]
+#set text(lang: "fr")
+#display-date(d)
 
-#[#set text(lang: "en", region: "GB"); #display-date(d, pattern: "short")]
+#set text(lang: "en", region: "GB")
+#display-date(d, pattern: "short")
