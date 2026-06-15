@@ -2,29 +2,6 @@
 
 ![Test Datify](https://github.com/Jeomhps/datify/actions/workflows/test.yml/badge.svg?branch=main)
 
-> **⚠️ Major Breaking Changes in v1.0.0+**
->
-> - The user-facing API of Datify has been completely rewritten.
-> - Functions like `day-name`, `month-name`, etc. are **no longer available
->   directly in Datify**. They have been moved to
->   [datify-core](https://github.com/Jeomhps/datify-core), which Datify uses as
->   its backend. Example migration:
->   ```typst
->   #import "@preview/datify-core:1.0.0": *
->   #get-day-name(datetime.today().weekday(), lang: "en") // Now available in datify-core
->   ```
-> - The new backend is based on the
->   [Unicode CLDR project](https://cldr.unicode.org/), providing robust
->   internationalization.
-> - If you need to resolve a single day or month name, it is recommended to use
->   `datify-core` directly. You can also use `custom-date-format` for this, but
->   it is less practical for single values.
-> - The core logic for string transformation now uses a formal language and
->   automata approach, similar to many modern date libraries. This introduces a
->   new quoting system for escaping text in patterns.
-> - **If you are migrating from a previous version, your code will need to be
->   updated.** The old usage is not compatible with this version.
-
 ---
 
 ## Table of Contents
@@ -36,12 +13,12 @@
    - [Format Tokens](#format-tokens)
    - [Named Patterns](#named-patterns)
    - [Literal Text in Patterns](#literal-text-in-patterns)
+   - [How Patterns Are Parsed](#how-patterns-are-parsed)
 4. [Supported Languages](#supported-languages)
 5. [Contributing](#contributing)
 6. [License](#license)
 7. [Development & Testing](#development--testing)
-8. [Planned Features](#planned-features)
-9. [Glossary](#glossary)
+8. [Glossary](#glossary)
 
 ---
 
@@ -58,7 +35,7 @@ internationalization and supports CLDR-style date patterns.
 Add Datify to your Typst project (specify the version you want):
 
 ```typst
-#import "@preview/datify:1.0.1": *
+#import "@preview/datify:1.1.0": *
 ```
 
 ---
@@ -113,22 +90,30 @@ The `pattern` argument can be either:
 
 ### Format Tokens
 
-| Token  | Description              | Example Output |
-| ------ | ------------------------ | -------------- |
-| `EEEE` | Full weekday name        | Sunday         |
-| `EEE`  | Abbreviated weekday name | Sun            |
-| `MMMM` | Full month name          | January        |
-| `MMM`  | Abbreviated month name   | Jan            |
-| `MM`   | Month number, 2 digits   | 01             |
-| `M`    | Month number, 1-2 digits | 1              |
-| `dd`   | Day of month, 2 digits   | 05             |
-| `d`    | Day of month, 1-2 digits | 5              |
-| `yyyy` | 4-digit year             | 2025           |
-| `yy`    | Year (same as `yyyy`)    | 2025           |
-| `y`    | Year (same as `yyyy`)    | 2025           |
+| Token       | Description                            | Example Output |
+| ----------- | -------------------------------------- | -------------- |
+| `EEEE`      | Full weekday name (format)             | Sunday         |
+| `E`–`EEE`   | Abbreviated weekday name (format)      | Sun            |
+| `cccc`      | Full weekday name (stand-alone)        | Sunday         |
+| `c`–`ccc`   | Abbreviated weekday name (stand-alone) | Sun            |
+| `MMMM`      | Full month name (format)               | January        |
+| `MMM`       | Abbreviated month name (format)        | Jan            |
+| `LLLL`      | Full month name (stand-alone)          | January        |
+| `LLL`       | Abbreviated month name (stand-alone)   | Jan            |
+| `MM` / `LL` | Month number, 2 digits                 | 01             |
+| `M` / `L`   | Month number, 1–2 digits               | 1              |
+| `dd`        | Day of month, 2 digits                 | 05             |
+| `d`         | Day of month, 1–2 digits               | 5              |
+| `yyyy` / `y`| Year                                   | 2025           |
+| `yy`        | Year, last two digits                  | 25             |
 
 - **Tokens are case-sensitive.**
-- Only the tokens above are supported.
+- Patterns are parsed by scanning maximal runs of the same letter, so any run
+  length works — the 5-letter narrow forms (`MMMMM`, `EEEEE`, `ccccc`, `LLLLL`)
+  map to the locale's narrow width.
+- **Unhandled field symbols pass through verbatim.** In particular the era
+  field `G` is **not supported** (datify-core ships no era data), so it is
+  emitted literally; this affects only the Thai (`th`) `full`/`long` patterns.
 
 ---
 
@@ -165,30 +150,62 @@ versions.
 
 ---
 
+### How Patterns Are Parsed
+
+`custom-date-format` walks the pattern as a small two-state automaton. Outside
+quotes it reads a **maximal run of one letter** as a single field and maps
+`(letter, run-length)` to a value; inside quotes every character is literal. `''`
+is an escaped apostrophe in either state. Letters with no mapping (e.g. the era
+field `G`, or any time-zone/quarter symbol) pass through verbatim.
+
+| State   | Input            | Action                                              | Next state |
+| ------- | ---------------- | --------------------------------------------------- | ---------- |
+| Normal  | run of a letter  | substitute field (`y M L d E c`; unknown → verbatim) | Normal     |
+| Normal  | `''`             | emit `'`                                            | Normal     |
+| Normal  | `'`              | open quote                                          | Literal    |
+| Normal  | any other char   | emit verbatim                                       | Normal     |
+| Literal | `''`             | emit `'`                                            | Literal    |
+| Literal | `'`              | close quote                                         | Normal     |
+| Literal | any other char   | emit verbatim                                       | Literal    |
+
+Parsing starts in **Normal** and ends in whichever state the input runs out in.
+
+Reading a whole run as one field (rather than matching a fixed token list) is
+why every run length is handled uniformly: `M`→`1`, `MM`→`01`, `MMM`→`Jan`,
+`MMMM`→`January`, `MMMMM`→`J` (narrow). The same applies to `d`, `y`, `E`, `c`,
+and `L`.
+
+---
+
 ## Supported Languages
 
 Datify supports all languages provided by
 [datify-core](https://github.com/Jeomhps/datify-core?tab=readme-ov-file#supported-locales).
-If you pass an unsupported language code, an error will be thrown.
+Region-specific or unknown codes resolve through datify-core's CLDR fallback
+chain: the trailing subtags are dropped one at a time (e.g. `fr-CA` → `fr`), and
+anything still unresolved falls back to the default locale (`en`). Formatting
+therefore never errors on an unrecognized language code.
 
 ---
 
 ## Contributing
 
-- **Native speakers wanted!** If you notice missing or incorrect translations
-  for a language, please contribute directly to
-  [datify-core](https://github.com/Jeomhps/datify-core), which manages all
-  locale data for Datify.
-- Pull requests for bug fixes, improvements, ideas, or feedback are welcome
-  here.
-- For upstream locale data and structure, see
-  [cldr-json](https://github.com/unicode-org/cldr-json).
+Datify owns only the formatting logic; all locale data lives in
+[datify-core](https://github.com/Jeomhps/datify-core), which is opinionated and
+CLDR-only (its data is generated from the Unicode CLDR, not hand-edited).
+
+- **Locale data fixes** (wrong or missing day/month names or patterns) should go
+  upstream to [CLDR](https://cldr.unicode.org/); they reach Datify through a
+  `datify-core` data update.
+- Pull requests here for bug fixes, formatter improvements, or new field-symbol
+  support are welcome.
+- See [cldr-json](https://github.com/unicode-org/cldr-json) for the upstream data and structure.
 
 ---
 
 ## License
 
-MIT © 2025 Jeomhps CLDR data © Unicode, Inc., used under the
+MIT © 2026 Jeomhps CLDR data © Unicode, Inc., used under the
 [Unicode License](https://unicode.org/copyright.html).
 
 ---
@@ -205,6 +222,23 @@ To run the full test suite locally, you have two options:
    ```sh
    act --artifact-server-path /tmp/artifact
    ```
+
+### Developing against a local `datify-core`
+
+Datify depends on the published `@preview/datify-core`. To iterate on both
+packages together before publishing, make your local `datify-core` checkout
+resolvable under the same namespace by linking it into Typst's local package
+directory (it overrides the downloaded copy of that version):
+
+```sh
+# Linux/macOS — adjust the version to match the pin in src/formats.typ
+DEST="${XDG_DATA_HOME:-$HOME/.local/share}/typst/packages/preview/datify-core/2.0.0"
+mkdir -p "$DEST"
+cp -r /path/to/datify-core/typst.toml /path/to/datify-core/src "$DEST"/
+```
+
+Re-run the copy after each change to `datify-core`, then `tt run` here picks up
+the local version. (On Windows the package dir is `%APPDATA%\typst\packages`.)
 
 ---
 

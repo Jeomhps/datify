@@ -4,36 +4,53 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "**"
+      - main
   pull_request:
-    branches:
-      - "**"
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Install Typst CLI
+      # TEMPORARY: datify pins an as-yet-unpublished @preview/datify-core version.
+      # Always test against the LATEST datify-core: check out its mainline (a
+      # branch ref fetches the newest commit each run) and serve it under whatever
+      # version datify imports. Delete these two steps once datify-core is
+      # published to the Typst registry.
+      - name: Check out latest datify-core
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          repository: Jeomhps/datify-core
+          ref: main # latest datify-core on its mainline
+          path: .datify-core-src
+
+      - name: Link latest datify-core into Typst's local package dir
         run: |
-          curl -L https://github.com/typst/typst/releases/download/v0.13.1/typst-x86_64-unknown-linux-musl.tar.xz -o typst.tar.xz
-          tar -xf typst.tar.xz
-          sudo mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/
-          typst --version
+          # Single source of truth for the version: datify's own import pin.
+          PIN="$(grep -oE '@preview/datify-core:[0-9]+\.[0-9]+\.[0-9]+' src/formats.typ | head -1 | cut -d: -f2)"
+          echo "datify imports datify-core $PIN"
+          DEST="${XDG_DATA_HOME:-$HOME/.local/share}/typst/packages/preview/datify-core/$PIN"
+          rm -rf "$DEST"; mkdir -p "$DEST"
+          cp -r .datify-core-src/typst.toml .datify-core-src/src "$DEST"/
+          # Serve the latest core content under the pinned version so Typst
+          # resolves it even if core's own version label has moved on.
+          sed -i -E "s/^version = \".*\"/version = \"$PIN\"/" "$DEST/typst.toml"
+          test -f "$DEST/src/main.typ" && echo "Linked latest datify-core as $PIN"
 
+      # No setup-typst: tytanic embeds the Typst compiler (0.2.2 -> Typst 0.13.x,
+      # matching the compiler pin in typst.toml).
       - name: Install tytanic
-        uses: taiki-e/cache-cargo-install-action@v2
+        uses: taiki-e/install-action@e49978b799e49ff429d162b7a30601a569ab6538 # v2.81.1
         with:
           tool: tytanic@0.2.2
 
       - name: Run test suite
-        run: tt run
+        run: tt run --root .
 
       - name: Archive artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: artifacts
@@ -41,4 +58,4 @@ jobs:
             tests/**/diff/*.png
             tests/**/out/*.png
             tests/**/ref/*.png
-          retention-days: 5
+          retention-days: 1
