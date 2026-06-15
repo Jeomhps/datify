@@ -15,15 +15,15 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       # TEMPORARY: datify pins an as-yet-unpublished @preview/datify-core version.
-      # Always test against the LATEST datify-core: check out the tip of its dev
-      # branch (a branch ref fetches the newest commit each run) and serve it
-      # under whatever version datify imports. Delete these two steps once
-      # datify-core is published to the Typst registry.
+      # Always test against the LATEST datify-core: check out its mainline (a
+      # branch ref fetches the newest commit each run) and serve it under whatever
+      # version datify imports. Delete these two steps once datify-core is
+      # published to the Typst registry.
       - name: Check out latest datify-core
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           repository: Jeomhps/datify-core
-          ref: refactor/core-rebuild # latest core dev branch; switch to "main" after it merges
+          ref: main # latest datify-core on its mainline
           path: .datify-core-src
 
       - name: Link latest datify-core into Typst's local package dir
