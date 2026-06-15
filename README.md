@@ -158,19 +158,17 @@ quotes it reads a **maximal run of one letter** as a single field and maps
 is an escaped apostrophe in either state. Letters with no mapping (e.g. the era
 field `G`, or any time-zone/quarter symbol) pass through verbatim.
 
-```mermaid
-stateDiagram-v2
-    [*] --> Normal
-    Normal --> Normal: letter run → field y/M/L/d/E/c; unknown letter → verbatim
-    Normal --> Normal: other char → verbatim
-    Normal --> Normal: '' → literal apostrophe
-    Normal --> Literal: ' opens literal
-    Literal --> Literal: any char → verbatim
-    Literal --> Literal: '' → literal apostrophe
-    Literal --> Normal: ' closes literal
-    Normal --> [*]: end of input
-    Literal --> [*]: end of input
-```
+| State   | Input            | Action                                              | Next state |
+| ------- | ---------------- | --------------------------------------------------- | ---------- |
+| Normal  | run of a letter  | substitute field (`y M L d E c`; unknown → verbatim) | Normal     |
+| Normal  | `''`             | emit `'`                                            | Normal     |
+| Normal  | `'`              | open quote                                          | Literal    |
+| Normal  | any other char   | emit verbatim                                       | Normal     |
+| Literal | `''`             | emit `'`                                            | Literal    |
+| Literal | `'`              | close quote                                         | Normal     |
+| Literal | any other char   | emit verbatim                                       | Literal    |
+
+Parsing starts in **Normal** and ends in whichever state the input runs out in.
 
 Reading a whole run as one field (rather than matching a fixed token list) is
 why every run length is handled uniformly: `M`→`1`, `MM`→`01`, `MMM`→`Jan`,
