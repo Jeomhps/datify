@@ -47,8 +47,7 @@
 5. [Contributing](#contributing)
 6. [License](#license)
 7. [Development & Testing](#development--testing)
-8. [Planned Features](#planned-features)
-9. [Glossary](#glossary)
+8. [Glossary](#glossary)
 
 ---
 
@@ -193,20 +192,22 @@ therefore never errors on an unrecognized language code.
 
 ## Contributing
 
-- **Native speakers wanted!** If you notice missing or incorrect translations
-  for a language, please contribute directly to
-  [datify-core](https://github.com/Jeomhps/datify-core), which manages all
-  locale data for Datify.
-- Pull requests for bug fixes, improvements, ideas, or feedback are welcome
-  here.
-- For upstream locale data and structure, see
-  [cldr-json](https://github.com/unicode-org/cldr-json).
+Datify owns only the formatting logic; all locale data lives in
+[datify-core](https://github.com/Jeomhps/datify-core), which is opinionated and
+CLDR-only (its data is generated from the Unicode CLDR, not hand-edited).
+
+- **Locale data fixes** (wrong or missing day/month names or patterns) should go
+  upstream to [CLDR](https://cldr.unicode.org/); they reach Datify through a
+  `datify-core` data update.
+- Pull requests here for bug fixes, formatter improvements, or new field-symbol
+  support are welcome.
+- See [cldr-json](https://github.com/unicode-org/cldr-json) for the upstream data and structure.
 
 ---
 
 ## License
 
-MIT © 2025 Jeomhps CLDR data © Unicode, Inc., used under the
+MIT © 2026 Jeomhps CLDR data © Unicode, Inc., used under the
 [Unicode License](https://unicode.org/copyright.html).
 
 ---
