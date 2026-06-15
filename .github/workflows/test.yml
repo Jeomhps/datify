@@ -4,33 +4,23 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "**"
+      - main
   pull_request:
-    branches:
-      - "**"
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Install Typst CLI
-        run: |
-          curl -L https://github.com/typst/typst/releases/download/v0.13.1/typst-x86_64-unknown-linux-musl.tar.xz -o typst.tar.xz
-          tar -xf typst.tar.xz
-          sudo mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/
-          typst --version
-
-      # TEMPORARY: datify pins @preview/datify-core:2.0.0, which is not yet
-      # published to the Typst registry. Until it is, resolve it from the sibling
-      # repo by dropping it into Typst's local package directory (this overrides
-      # the registry copy of that version). Remove this block once datify-core
-      # 2.0.0 is published, and update the pin/ref accordingly.
+      # TEMPORARY: datify pins @preview/datify-core:2.0.0, which is not yet on the
+      # Typst registry. Resolve it from the sibling repo by dropping it into
+      # Typst's local package directory (tytanic's embedded Typst reads the same
+      # package dirs). Remove this once datify-core 2.0.0 is published, and update
+      # the pin/ref accordingly.
       - name: Check out unpublished datify-core
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           repository: Jeomhps/datify-core
           ref: refactor/core-rebuild
@@ -43,18 +33,18 @@ jobs:
           cp -r .datify-core-src/typst.toml .datify-core-src/src "$DEST"/
           test -f "$DEST/src/main.typ" && echo "datify-core 2.0.0 linked at $DEST"
 
+      # No setup-typst: tytanic embeds the Typst compiler (0.2.2 -> Typst 0.13.x,
+      # matching the compiler pin in typst.toml).
       - name: Install tytanic
-        run: |
-          curl -L https://github.com/typst-community/tytanic/releases/download/v0.2.2/tytanic-x86_64-unknown-linux-musl.tar.xz -o tytanic.tar.xz
-          tar -xf tytanic.tar.xz
-          sudo mv tytanic-x86_64-unknown-linux-musl/tt /usr/local/bin/
-          tt --version
+        uses: taiki-e/install-action@e49978b799e49ff429d162b7a30601a569ab6538 # v2.81.1
+        with:
+          tool: tytanic@0.2.2
 
       - name: Run test suite
-        run: tt run
+        run: tt run --root .
 
       - name: Archive artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: artifacts
@@ -62,4 +52,4 @@ jobs:
             tests/**/diff/*.png
             tests/**/out/*.png
             tests/**/ref/*.png
-          retention-days: 5
+          retention-days: 1
