@@ -42,7 +42,7 @@ all locale data (day names, month names, locale-specific patterns) comes from
 Add Datify to your Typst project (pick the version you want):
 
 ```typst
-#import "@preview/datify:1.2.0": *
+#import "@preview/datify:1.3.0": *
 ```
 
 ---
@@ -74,6 +74,7 @@ custom-date-format(date, pattern: "full", lang: "en") -> str
 | `date`    | `datetime` | yes      | –        | The date to format (positional — the only unnamed argument).       |
 | `pattern` | `str`      | no       | `"full"` | A [named pattern](#named-patterns) or a custom [CLDR pattern](#format-tokens). |
 | `lang`    | `str`      | no       | `"en"`   | ISO 639 language code, optionally with a region (e.g. `fr`, `fr-CA`). |
+| `community` | `bool`   | no       | `false`  | Consult datify-core's opt-in [community overlay](https://github.com/Jeomhps/datify-core#community-overlay) first (e.g. Brazilian `pt-BR` conventions). |
 
 **Returns:** the formatted date as a `str`.
 
@@ -109,6 +110,7 @@ display-date(date, pattern: "full") -> content
 | --------- | ---------- | -------- | -------- | ------------------------------------------------------------------ |
 | `date`    | `datetime` | yes      | –        | The date to format (positional).                                   |
 | `pattern` | `str`      | no       | `"full"` | A [named pattern](#named-patterns) or a custom [CLDR pattern](#format-tokens). |
+| `community` | `bool`   | no       | `false`  | Consult datify-core's opt-in [community overlay](https://github.com/Jeomhps/datify-core#community-overlay) first. |
 
 **Returns:** `content`. The active locale is only known inside a `context`, so
 `display-date` returns content — **place it in your document**; don't do string

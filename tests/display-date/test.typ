@@ -43,3 +43,13 @@
   assert.eq(text.region, none)
   assert.eq(custom-date-format(d, pattern: "short", lang: text.lang), "1/5/25")
 }
+
+// --- community flag is threaded through display-date (d is a Sunday) ---
+#assert.eq(type(display-date(d, community: true)), content)
+#set text(lang: "pt", region: "BR")
+#context {
+  assert.eq(text.lang + "-" + text.region, "pt-BR")
+  assert.eq(custom-date-format(d, pattern: "cccc", lang: "pt-BR"), "domingo")              // off -> CLDR
+  assert.eq(custom-date-format(d, pattern: "cccc", lang: "pt-BR", community: true), "Domingo") // on -> overlay
+}
+#display-date(d, community: true) // smoke
