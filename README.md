@@ -2,36 +2,6 @@
 
 ![Test Datify](https://github.com/Jeomhps/datify/actions/workflows/test.yml/badge.svg?branch=main)
 
-> **⚠️ Major Breaking Changes in v1.0.0+**
->
-> - The user-facing API of Datify has been completely rewritten.
-> - Functions like `day-name`, `month-name`, etc. are **no longer available
->   directly in Datify**. They have been moved to
->   [datify-core](https://github.com/Jeomhps/datify-core), which Datify uses as
->   its backend. Example migration:
->   ```typst
->   #import "@preview/datify-core:2.0.0": *
->   #get-day-name(datetime.today().weekday(), lang: "en") // Now available in datify-core
->   ```
-> - The new backend is based on the
->   [Unicode CLDR project](https://cldr.unicode.org/), providing robust
->   internationalization.
-> - If you need to resolve a single day or month name, it is recommended to use
->   `datify-core` directly. You can also use `custom-date-format` for this, but
->   it is less practical for single values.
-> - The core logic for string transformation now uses a formal language and
->   automata approach, similar to many modern date libraries. This introduces a
->   new quoting system for escaping text in patterns.
-> - **If you are migrating from a previous version, your code will need to be
->   updated.** The old usage is not compatible with this version.
->
-> **v1.1.0** adopts `datify-core` 2.0.0: per-locale lazy loading and a CLDR
-> fallback chain, so unknown or region-specific language codes now **fall back**
-> (e.g. `fr-CA` → `fr`, unknown → `en`) instead of erroring. Adds stand-alone
-> weekday/month support (`c` / `L`). The era field `G` remains unsupported and
-> passes through verbatim. These changes are backward-compatible: the public API
-> is unchanged and existing patterns format identically.
-
 ---
 
 ## Table of Contents
@@ -43,6 +13,7 @@
    - [Format Tokens](#format-tokens)
    - [Named Patterns](#named-patterns)
    - [Literal Text in Patterns](#literal-text-in-patterns)
+   - [How Patterns Are Parsed](#how-patterns-are-parsed)
 4. [Supported Languages](#supported-languages)
 5. [Contributing](#contributing)
 6. [License](#license)
@@ -176,6 +147,35 @@ include a single quote, use `''` (two single quotes).
 ⚠️ **Important**: Always quote literal text to avoid misinterpretation as
 tokens. While unquoted text may work now, it could cause errors in future
 versions.
+
+---
+
+### How Patterns Are Parsed
+
+`custom-date-format` walks the pattern as a small two-state automaton. Outside
+quotes it reads a **maximal run of one letter** as a single field and maps
+`(letter, run-length)` to a value; inside quotes every character is literal. `''`
+is an escaped apostrophe in either state. Letters with no mapping (e.g. the era
+field `G`, or any time-zone/quarter symbol) pass through verbatim.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Normal
+    Normal --> Normal: letter run → field y/M/L/d/E/c; unknown letter → verbatim
+    Normal --> Normal: other char → verbatim
+    Normal --> Normal: '' → literal apostrophe
+    Normal --> Literal: ' opens literal
+    Literal --> Literal: any char → verbatim
+    Literal --> Literal: '' → literal apostrophe
+    Literal --> Normal: ' closes literal
+    Normal --> [*]: end of input
+    Literal --> [*]: end of input
+```
+
+Reading a whole run as one field (rather than matching a fixed token list) is
+why every run length is handled uniformly: `M`→`1`, `MM`→`01`, `MMM`→`Jan`,
+`MMMM`→`January`, `MMMMM`→`J` (narrow). The same applies to `d`, `y`, `E`, `c`,
+and `L`.
 
 ---
 
