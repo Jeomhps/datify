@@ -75,6 +75,9 @@ rather format in the document's current language, use `display-date`, which read
 ```typst
 #set text(lang: "fr")
 #display-date(datetime(year: 2025, month: 1, day: 5)) // dimanche 5 janvier 2025
+
+// Region is honored too — `en` and `en-GB` format differently:
+#set text(lang: "en", region: "GB")
 #display-date(datetime(year: 2025, month: 1, day: 5), pattern: "short") // 05/01/2025
 ```
 
@@ -89,10 +92,11 @@ string operations on it. For programmatic/string use, keep calling
 `custom-date-format` with an explicit `lang`. (Equivalent without the helper:
 `#context custom-date-format(date, lang: text.lang)`.)
 
-`text.lang` is the bare language (e.g. `"fr"`); region lives in `text.region`.
-The bare language is enough thanks to datify-core's fallback chain, but for
-region precision you can pass `text.lang + "-" + text.region` to
-`custom-date-format` yourself.
+`display-date` combines `text.lang` with `text.region` automatically (e.g.
+`"en"` + `"GB"` → `"en-GB"`); if a region has no dedicated CLDR data,
+datify-core's fallback chain truncates it back to the base language. Script
+subtags (e.g. `"Hant"`) aren't exposed by `text`, so locales needing one fall
+back to the base language.
 
 ---
 

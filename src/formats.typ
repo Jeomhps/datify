@@ -151,18 +151,29 @@
 }
 
 // Content-returning convenience wrapper: formats `date` using the document's
-// current language (`text.lang`) instead of a hardcoded default. Because the
-// active language is only known inside `context`, this returns content, not a
-// string — use it where you place a date in the document. For programmatic
-// (string) use, call `custom-date-format` with an explicit `lang`.
+// current locale instead of a hardcoded default. It combines `text.lang` with
+// `text.region` (e.g. lang "en" + region "GB" -> "en-GB"); datify-core's
+// fallback chain truncates a region that has no dedicated data back to the base
+// language, so this is always safe. Because the active locale is only known
+// inside `context`, this returns content, not a string — place it in the
+// document. For programmatic (string) use, call `custom-date-format` with an
+// explicit `lang`.
 //
 //   #set text(lang: "fr")
 //   #display-date(datetime(year: 2025, month: 1, day: 5)) // dimanche 5 janvier 2025
 //
-// `text.lang` is the bare language (e.g. "fr"); region lives in `text.region`.
-// The bare language is enough thanks to datify-core's fallback chain, but for
-// region precision you could pass `text.lang + "-" + text.region`.
+//   #set text(lang: "en", region: "GB")
+//   #display-date(datetime(year: 2025, month: 1, day: 5), pattern: "short") // 05/01/2025
+//
+// Note: script subtags (e.g. "Hant") aren't exposed by `text`, so locales that
+// need one fall back to the base language.
 #let display-date = (
   date,
   pattern: "full",
-) => context custom-date-format(date, pattern: pattern, lang: text.lang)
+) => context {
+  let code = text.lang
+  if text.region != none {
+    code += "-" + text.region
+  }
+  custom-date-format(date, pattern: pattern, lang: code)
+}

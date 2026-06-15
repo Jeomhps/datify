@@ -201,7 +201,16 @@
 }
 #assert.eq(type(display-date(disp_date)), content) // wrapper returns content
 #display-date(disp_date) // smoke: renders in the document language without error
-#set text(lang: "en")
+
+// display-date also honors text.region: en vs en-GB differ for "short".
+#set text(lang: "en", region: "GB")
+#context {
+  let code = text.lang + "-" + text.region
+  assert.eq(code, "en-GB")
+  assert.eq(custom-date-format(disp_date, pattern: "short", lang: code), "05/01/2025")
+}
+#set text(lang: "en", region: none)
+#context assert.eq(custom-date-format(disp_date, pattern: "short", lang: text.lang), "1/5/25")
 
 // Zero-padding edge case
 #let pad_date = datetime(year: 2025, month: 2, day: 3)
