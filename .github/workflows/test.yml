@@ -14,24 +14,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      # TEMPORARY: datify pins @preview/datify-core:2.0.0, which is not yet on the
-      # Typst registry. Resolve it from the sibling repo by dropping it into
-      # Typst's local package directory (tytanic's embedded Typst reads the same
-      # package dirs). Remove this once datify-core 2.0.0 is published, and update
-      # the pin/ref accordingly.
-      - name: Check out unpublished datify-core
+      # TEMPORARY: datify pins an as-yet-unpublished @preview/datify-core version.
+      # Always test against the LATEST datify-core: check out the tip of its dev
+      # branch (a branch ref fetches the newest commit each run) and serve it
+      # under whatever version datify imports. Delete these two steps once
+      # datify-core is published to the Typst registry.
+      - name: Check out latest datify-core
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           repository: Jeomhps/datify-core
-          ref: refactor/core-rebuild
+          ref: refactor/core-rebuild # latest core dev branch; switch to "main" after it merges
           path: .datify-core-src
 
-      - name: Link datify-core 2.0.0 into Typst's local package dir
+      - name: Link latest datify-core into Typst's local package dir
         run: |
-          DEST="${XDG_DATA_HOME:-$HOME/.local/share}/typst/packages/preview/datify-core/2.0.0"
-          mkdir -p "$DEST"
+          # Single source of truth for the version: datify's own import pin.
+          PIN="$(grep -oE '@preview/datify-core:[0-9]+\.[0-9]+\.[0-9]+' src/formats.typ | head -1 | cut -d: -f2)"
+          echo "datify imports datify-core $PIN"
+          DEST="${XDG_DATA_HOME:-$HOME/.local/share}/typst/packages/preview/datify-core/$PIN"
+          rm -rf "$DEST"; mkdir -p "$DEST"
           cp -r .datify-core-src/typst.toml .datify-core-src/src "$DEST"/
-          test -f "$DEST/src/main.typ" && echo "datify-core 2.0.0 linked at $DEST"
+          # Serve the latest core content under the pinned version so Typst
+          # resolves it even if core's own version label has moved on.
+          sed -i -E "s/^version = \".*\"/version = \"$PIN\"/" "$DEST/typst.toml"
+          test -f "$DEST/src/main.typ" && echo "Linked latest datify-core as $PIN"
 
       # No setup-typst: tytanic embeds the Typst compiler (0.2.2 -> Typst 0.13.x,
       # matching the compiler pin in typst.toml).
