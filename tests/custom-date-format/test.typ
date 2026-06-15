@@ -76,6 +76,11 @@
 // stand-alone (L) and format (M) months differ in Russian
 #assert.eq(custom-date-format(d, pattern: "LLLL", lang: "ru"), "январь") // nominative
 #assert.eq(custom-date-format(d, pattern: "MMMM", lang: "ru"), "января") // genitive
+// Over-length / malformed runs collapse to a single field (not concatenated):
+// the run-length scanner reads the whole run as one token.
+#assert.eq(custom-date-format(d, pattern: "ddd", lang: "en"), "05") // not "055"
+#assert.eq(custom-date-format(d, pattern: "dddd", lang: "en"), "05")
+#assert.eq(custom-date-format(d, pattern: "yyy", lang: "en"), "2025") // not "252025"
 
 // --- Locale day/month names (fr, es, pt) ---
 #let fr_date = datetime(year: 2025, month: 8, day: 23)
