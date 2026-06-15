@@ -24,6 +24,25 @@ jobs:
           sudo mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/
           typst --version
 
+      # TEMPORARY: datify pins @preview/datify-core:2.0.0, which is not yet
+      # published to the Typst registry. Until it is, resolve it from the sibling
+      # repo by dropping it into Typst's local package directory (this overrides
+      # the registry copy of that version). Remove this block once datify-core
+      # 2.0.0 is published, and update the pin/ref accordingly.
+      - name: Check out unpublished datify-core
+        uses: actions/checkout@v4
+        with:
+          repository: Jeomhps/datify-core
+          ref: refactor/core-rebuild
+          path: .datify-core-src
+
+      - name: Link datify-core 2.0.0 into Typst's local package dir
+        run: |
+          DEST="${XDG_DATA_HOME:-$HOME/.local/share}/typst/packages/preview/datify-core/2.0.0"
+          mkdir -p "$DEST"
+          cp -r .datify-core-src/typst.toml .datify-core-src/src "$DEST"/
+          test -f "$DEST/src/main.typ" && echo "datify-core 2.0.0 linked at $DEST"
+
       - name: Install tytanic
         uses: taiki-e/cache-cargo-install-action@v2
         with:
