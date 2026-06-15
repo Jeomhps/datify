@@ -188,6 +188,21 @@
 // render correctly while the literal "G" remains. (Documented in the README.)
 #assert(custom-date-format(c_date, pattern: "full", lang: "th") == "วันอังคารที่ 9 กันยายน G 2025")
 
+// display-date: picks up the document language via `context text.lang`. The
+// underlying resolution (what the wrapper does) is asserted here; the wrapper
+// itself is placed below to confirm it compiles and returns content.
+#let disp_date = datetime(year: 2025, month: 1, day: 5)
+#set text(lang: "fr")
+#context {
+  assert.eq(
+    custom-date-format(disp_date, pattern: "full", lang: text.lang),
+    "dimanche 5 janvier 2025",
+  )
+}
+#assert.eq(type(display-date(disp_date)), content) // wrapper returns content
+#display-date(disp_date) // smoke: renders in the document language without error
+#set text(lang: "en")
+
 // Zero-padding edge case
 #let pad_date = datetime(year: 2025, month: 2, day: 3)
 #assert(custom-date-format(pad_date, pattern: "MM-dd") == "02-03")

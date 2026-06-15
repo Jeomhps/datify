@@ -149,3 +149,20 @@
 
   return result
 }
+
+// Content-returning convenience wrapper: formats `date` using the document's
+// current language (`text.lang`) instead of a hardcoded default. Because the
+// active language is only known inside `context`, this returns content, not a
+// string — use it where you place a date in the document. For programmatic
+// (string) use, call `custom-date-format` with an explicit `lang`.
+//
+//   #set text(lang: "fr")
+//   #display-date(datetime(year: 2025, month: 1, day: 5)) // dimanche 5 janvier 2025
+//
+// `text.lang` is the bare language (e.g. "fr"); region lives in `text.region`.
+// The bare language is enough thanks to datify-core's fallback chain, but for
+// region precision you could pass `text.lang + "-" + text.region`.
+#let display-date = (
+  date,
+  pattern: "full",
+) => context custom-date-format(date, pattern: pattern, lang: text.lang)

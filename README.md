@@ -10,6 +10,7 @@
 2. [Installation](#installation)
 3. [Usage](#usage)
    - [Formatting Dates](#formatting-dates)
+   - [Using the Document Language (`display-date`)](#using-the-document-language-display-date)
    - [Format Tokens](#format-tokens)
    - [Named Patterns](#named-patterns)
    - [Literal Text in Patterns](#literal-text-in-patterns)
@@ -35,7 +36,7 @@ internationalization and supports CLDR-style date patterns.
 Add Datify to your Typst project (specify the version you want):
 
 ```typst
-#import "@preview/datify:1.1.0": *
+#import "@preview/datify:1.2.0": *
 ```
 
 ---
@@ -62,6 +63,36 @@ locale.** **All arguments must be named except for the first (`date`).**
 #custom-date-format(mydate, pattern: "yyyy-MM-dd") // Output: 2025-01-05
 #custom-date-format(mydate, pattern: "full", lang: "fr") // Output: dimanche 5 janvier 2025
 ```
+
+---
+
+### Using the Document Language (`display-date`)
+
+`custom-date-format` returns a **string** and defaults to `lang: "en"`. If you'd
+rather format in the document's current language, use `display-date`, which reads
+`text.lang` for you:
+
+```typst
+#set text(lang: "fr")
+#display-date(datetime(year: 2025, month: 1, day: 5)) // dimanche 5 janvier 2025
+#display-date(datetime(year: 2025, month: 1, day: 5), pattern: "short") // 05/01/2025
+```
+
+| Argument | Type     | Required | Default | Description                          |
+| -------- | -------- | -------- | ------- | ------------------------------------ |
+| date     | datetime | Yes      | –       | The date to format                   |
+| pattern  | str      | No       | "full"  | Pattern string or CLDR named pattern |
+
+Because the active language is only known inside a `context`, `display-date`
+returns **content**, not a string — place it in your document rather than doing
+string operations on it. For programmatic/string use, keep calling
+`custom-date-format` with an explicit `lang`. (Equivalent without the helper:
+`#context custom-date-format(date, lang: text.lang)`.)
+
+`text.lang` is the bare language (e.g. `"fr"`); region lives in `text.region`.
+The bare language is enough thanks to datify-core's fallback chain, but for
+region precision you can pass `text.lang + "-" + text.region` to
+`custom-date-format` yourself.
 
 ---
 

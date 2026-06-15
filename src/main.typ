@@ -1,1 +1,1 @@
-#import "formats.typ": custom-date-format
+#import "formats.typ": custom-date-format, display-date
