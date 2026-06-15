@@ -2,38 +2,44 @@
 
 ![Test Datify](https://github.com/Jeomhps/datify/actions/workflows/test.yml/badge.svg?branch=main)
 
+Datify is a Typst package for flexible, locale-aware date formatting. It turns a
+`datetime` and a CLDR pattern into a formatted date string, using the locale data
+provided by [datify-core](https://github.com/Jeomhps/datify-core).
+
 ---
 
 ## Table of Contents
 
 1. [Overview](#overview)
 2. [Installation](#installation)
-3. [Usage](#usage)
-   - [Formatting Dates](#formatting-dates)
-   - [Using the Document Language (`display-date`)](#using-the-document-language-display-date)
-   - [Format Tokens](#format-tokens)
+3. [API Reference](#api-reference)
+   - [`custom-date-format`](#custom-date-format)
+   - [`display-date`](#display-date)
+4. [Pattern Reference](#pattern-reference)
    - [Named Patterns](#named-patterns)
-   - [Literal Text in Patterns](#literal-text-in-patterns)
+   - [Format Tokens](#format-tokens)
+   - [Literal Text](#literal-text)
    - [How Patterns Are Parsed](#how-patterns-are-parsed)
-4. [Supported Languages](#supported-languages)
-5. [Contributing](#contributing)
-6. [License](#license)
-7. [Development & Testing](#development--testing)
-8. [Glossary](#glossary)
+5. [Supported Languages](#supported-languages)
+6. [Contributing](#contributing)
+7. [License](#license)
+8. [Development & Testing](#development--testing)
+9. [Glossary](#glossary)
 
 ---
 
 ## Overview
 
-Datify is a Typst package for flexible, locale-aware date formatting. It
-leverages [datify-core](https://github.com/Jeomhps/datify-core) for
-internationalization and supports CLDR-style date patterns.
+Datify has one job: format a date. It owns *pattern parsing and substitution*;
+all locale data (day names, month names, locale-specific patterns) comes from
+[datify-core](https://github.com/Jeomhps/datify-core). Patterns follow the
+[Unicode CLDR](https://cldr.unicode.org/) field-symbol convention.
 
 ---
 
 ## Installation
 
-Add Datify to your Typst project (specify the version you want):
+Add Datify to your Typst project (pick the version you want):
 
 ```typst
 #import "@preview/datify:1.2.0": *
@@ -41,185 +47,184 @@ Add Datify to your Typst project (specify the version you want):
 
 ---
 
-## Usage
+## API Reference
 
-### Function Reference
+Datify exposes **exactly two functions**. They accept the same `date` and
+`pattern`; they differ only in how the locale is chosen and what they return.
 
-| Argument | Type     | Required | Default | Description                                      |
-| -------- | -------- | -------- | ------- | ------------------------------------------------ |
-| date     | datetime | Yes      | –       | The date to format                               |
-| pattern  | str      | No       | "full"  | Pattern string or CLDR named pattern             |
-| lang     | str      | No       | "en"    | ISO 639-1 language code (e.g., "en", "fr", "es") |
+| Function                              | Returns   | Use it when                                                        |
+| ------------------------------------- | --------- | ------------------------------------------------------------------ |
+| [`custom-date-format`](#custom-date-format) | `string`  | you need the formatted date as a string, with an explicit language |
+| [`display-date`](#display-date)       | `content` | you want to place a date that follows the **document's** language   |
 
-**If you only provide `lang`, the pattern defaults to `"full"` for that
-locale.** **All arguments must be named except for the first (`date`).**
+### `custom-date-format`
 
-#### Example usage
+Format a date to a **string** with an explicitly chosen language.
+
+**Synopsis**
 
 ```typst
-#let mydate = datetime(year: 2025, month: 1, day: 5)
-#custom-date-format(mydate) // Output: Sunday, January 5, 2025 (in English, full format)
-#custom-date-format(mydate, lang: "es") // Output: domingo, 5 de enero de 2025
-#custom-date-format(mydate, pattern: "yyyy-MM-dd") // Output: 2025-01-05
-#custom-date-format(mydate, pattern: "full", lang: "fr") // Output: dimanche 5 janvier 2025
+custom-date-format(date, pattern: "full", lang: "en") -> str
 ```
 
----
+**Parameters**
 
-### Using the Document Language (`display-date`)
+| Name      | Type       | Required | Default  | Description                                                        |
+| --------- | ---------- | -------- | -------- | ------------------------------------------------------------------ |
+| `date`    | `datetime` | yes      | –        | The date to format (positional — the only unnamed argument).       |
+| `pattern` | `str`      | no       | `"full"` | A [named pattern](#named-patterns) or a custom [CLDR pattern](#format-tokens). |
+| `lang`    | `str`      | no       | `"en"`   | ISO 639 language code, optionally with a region (e.g. `fr`, `fr-CA`). |
 
-`custom-date-format` returns a **string** and defaults to `lang: "en"`. If you'd
-rather format in the document's current language, use `display-date`, which reads
-`text.lang` for you:
+**Returns:** the formatted date as a `str`.
+
+**Examples**
+
+```typst
+#let d = datetime(year: 2025, month: 1, day: 5)
+
+#custom-date-format(d)                              // Sunday, January 5, 2025
+#custom-date-format(d, lang: "es")                  // domingo, 5 de enero de 2025
+#custom-date-format(d, pattern: "full", lang: "fr") // dimanche 5 janvier 2025
+#custom-date-format(d, pattern: "yyyy-MM-dd")       // 2025-01-05
+```
+
+An unknown or region-specific `lang` never errors — it resolves through
+datify-core's [fallback chain](#supported-languages).
+
+### `display-date`
+
+Format a date using the **document's current locale** (`text.lang` +
+`text.region`), returning **content**. Use this when you just want the date to
+match the surrounding document without passing a language every time.
+
+**Synopsis**
+
+```typst
+display-date(date, pattern: "full") -> content
+```
+
+**Parameters**
+
+| Name      | Type       | Required | Default  | Description                                                        |
+| --------- | ---------- | -------- | -------- | ------------------------------------------------------------------ |
+| `date`    | `datetime` | yes      | –        | The date to format (positional).                                   |
+| `pattern` | `str`      | no       | `"full"` | A [named pattern](#named-patterns) or a custom [CLDR pattern](#format-tokens). |
+
+**Returns:** `content`. The active locale is only known inside a `context`, so
+`display-date` returns content — **place it in your document**; don't do string
+operations on the result. For string output, use
+[`custom-date-format`](#custom-date-format) with an explicit `lang`.
+
+**Examples**
 
 ```typst
 #set text(lang: "fr")
-#display-date(datetime(year: 2025, month: 1, day: 5)) // dimanche 5 janvier 2025
+#display-date(datetime(year: 2025, month: 1, day: 5))                  // dimanche 5 janvier 2025
 
-// Region is honored too — `en` and `en-GB` format differently:
+// Region is honored: en vs en-GB differ.
 #set text(lang: "en", region: "GB")
 #display-date(datetime(year: 2025, month: 1, day: 5), pattern: "short") // 05/01/2025
 ```
 
-| Argument | Type     | Required | Default | Description                          |
-| -------- | -------- | -------- | ------- | ------------------------------------ |
-| date     | datetime | Yes      | –       | The date to format                   |
-| pattern  | str      | No       | "full"  | Pattern string or CLDR named pattern |
+**Notes**
 
-Because the active language is only known inside a `context`, `display-date`
-returns **content**, not a string — place it in your document rather than doing
-string operations on it. For programmatic/string use, keep calling
-`custom-date-format` with an explicit `lang`. (Equivalent without the helper:
-`#context custom-date-format(date, lang: text.lang)`.)
-
-`display-date` combines `text.lang` with `text.region` automatically (e.g.
-`"en"` + `"GB"` → `"en-GB"`); if a region has no dedicated CLDR data,
-datify-core's fallback chain truncates it back to the base language. Script
-subtags (e.g. `"Hant"`) aren't exposed by `text`, so locales needing one fall
-back to the base language.
+- It combines `text.lang` with `text.region` automatically (e.g. `en` + `GB` →
+  `en-GB`). A region with no dedicated CLDR data truncates back to the base
+  language via the fallback chain. Script subtags (e.g. `Hant`) aren't exposed by
+  `text`, so locales needing one fall back to the base language.
+- `text.lang` defaults to `"en"`, so `display-date` with no `#set text` formats
+  in English.
+- Equivalent without the helper: `#context custom-date-format(date, lang: text.lang)`.
 
 ---
 
-### Pattern Syntax
+## Pattern Reference
 
-The `pattern` argument can be either:
-
-- A **CLDR named pattern** (`"full"`, `"long"`, `"medium"`, `"short"`) for
-  locale-appropriate formatting.
-- A **custom string pattern** using the tokens below.
-
-#### CLDR Pattern Example
-
-```typst
-#custom-date-format(mydate, pattern: "full", lang: "fr") // Output: dimanche 5 janvier 2025
-```
-
-#### Custom Pattern Example
-
-```typst
-#custom-date-format(mydate, pattern: "EEEE, MMMM dd, yyyy") // Output: Sunday, January 05, 2025
-#custom-date-format(mydate, pattern: "EEE, MMM d, yyyy") // Output: Sun, Jan 5, 2025
-```
-
----
-
-### Format Tokens
-
-| Token       | Description                            | Example Output |
-| ----------- | -------------------------------------- | -------------- |
-| `EEEE`      | Full weekday name (format)             | Sunday         |
-| `E`–`EEE`   | Abbreviated weekday name (format)      | Sun            |
-| `cccc`      | Full weekday name (stand-alone)        | Sunday         |
-| `c`–`ccc`   | Abbreviated weekday name (stand-alone) | Sun            |
-| `MMMM`      | Full month name (format)               | January        |
-| `MMM`       | Abbreviated month name (format)        | Jan            |
-| `LLLL`      | Full month name (stand-alone)          | January        |
-| `LLL`       | Abbreviated month name (stand-alone)   | Jan            |
-| `MM` / `LL` | Month number, 2 digits                 | 01             |
-| `M` / `L`   | Month number, 1–2 digits               | 1              |
-| `dd`        | Day of month, 2 digits                 | 05             |
-| `d`         | Day of month, 1–2 digits               | 5              |
-| `yyyy` / `y`| Year                                   | 2025           |
-| `yy`        | Year, last two digits                  | 25             |
-
-- **Tokens are case-sensitive.**
-- Patterns are parsed by scanning maximal runs of the same letter, so any run
-  length works — the 5-letter narrow forms (`MMMMM`, `EEEEE`, `ccccc`, `LLLLL`)
-  map to the locale's narrow width.
-- **Unhandled field symbols pass through verbatim.** In particular the era
-  field `G` is **not supported** (datify-core ships no era data), so it is
-  emitted literally; this affects only the Thai (`th`) `full`/`long` patterns.
-
----
+The `pattern` argument of both functions is either a **named pattern** or a
+**custom pattern string** made of the tokens below.
 
 ### Named Patterns
 
-You can use CLDR-style named patterns: `"full"`, `"long"`, `"medium"`,
-`"short"`. These will be resolved to locale-appropriate patterns for the given
-language.
+Locale-appropriate presets resolved per language: `"full"`, `"long"`,
+`"medium"`, `"short"`.
 
-| Pattern | English (en)            | French (fr)             |
-| ------- | ----------------------- | ----------------------- |
-| full    | Sunday, January 5, 2025 | dimanche 5 janvier 2025 |
-| long    | January 5, 2025         | 5 janvier 2025          |
-| medium  | Jan 5, 2025             | 5 janv. 2025            |
-| short   | 1/5/25                  | 05/01/2025              |
+| Pattern  | English (`en`)          | French (`fr`)           |
+| -------- | ----------------------- | ----------------------- |
+| `full`   | Sunday, January 5, 2025 | dimanche 5 janvier 2025 |
+| `long`   | January 5, 2025         | 5 janvier 2025          |
+| `medium` | Jan 5, 2025             | 5 janv. 2025            |
+| `short`  | 1/5/25                  | 05/01/2025              |
 
----
+### Format Tokens
 
-### Literal Text in Patterns
+Custom patterns are built from CLDR field symbols. Tokens are **case-sensitive**.
 
-To include **literal text** in patterns, wrap it in single quotes (`'`). To
-include a single quote, use `''` (two single quotes).
+| Token        | Description                            | Example |
+| ------------ | -------------------------------------- | ------- |
+| `EEEE`       | Weekday name, format, wide             | Sunday  |
+| `E`–`EEE`    | Weekday name, format, abbreviated      | Sun     |
+| `cccc`       | Weekday name, stand-alone, wide        | Sunday  |
+| `c`–`ccc`    | Weekday name, stand-alone, abbreviated | Sun     |
+| `MMMM`       | Month name, format, wide               | January |
+| `MMM`        | Month name, format, abbreviated        | Jan     |
+| `LLLL`       | Month name, stand-alone, wide          | January |
+| `LLL`        | Month name, stand-alone, abbreviated   | Jan     |
+| `MM` / `LL`  | Month number, 2 digits                 | 01      |
+| `M` / `L`    | Month number, 1–2 digits               | 1       |
+| `dd`         | Day of month, 2 digits                 | 05      |
+| `d`          | Day of month, 1–2 digits               | 5       |
+| `yyyy` / `y` | Year                                   | 2025    |
+| `yy`         | Year, last two digits                  | 25      |
 
-| Example Pattern     | Output          |
+The 5-letter narrow forms (`MMMMM`, `EEEEE`, `ccccc`, `LLLLL`) map to the
+locale's narrow width. **Unhandled field symbols pass through verbatim** — in
+particular the era field `G` is not supported (datify-core ships no era data), so
+it is emitted literally (affects only the Thai `th` `full`/`long` patterns).
+
+### Literal Text
+
+Wrap literal text in single quotes (`'`). For a literal apostrophe, use `''`.
+
+| Pattern             | Output          |
 | ------------------- | --------------- |
 | `'Today is' EEEE`   | Today is Sunday |
 | `yyyy'/'MM'/'dd`    | 2025/01/05      |
-| `'''Quoted text'''` | 'Quoted text'   |
 | `EEE 'the' dd`      | Sun the 05      |
+| `'''Quoted text'''` | 'Quoted text'   |
 
-⚠️ **Important**: Always quote literal text to avoid misinterpretation as
-tokens. While unquoted text may work now, it could cause errors in future
-versions.
-
----
+> **Always quote literal letters** so they aren't read as field tokens.
 
 ### How Patterns Are Parsed
 
-`custom-date-format` walks the pattern as a small two-state automaton. Outside
-quotes it reads a **maximal run of one letter** as a single field and maps
-`(letter, run-length)` to a value; inside quotes every character is literal. `''`
-is an escaped apostrophe in either state. Letters with no mapping (e.g. the era
-field `G`, or any time-zone/quarter symbol) pass through verbatim.
+The parser is a small two-state automaton. Outside quotes it reads a **maximal
+run of one letter** as a single field and maps `(letter, run-length)` to a value;
+inside quotes every character is literal. `''` is an escaped apostrophe in either
+state.
 
-| State   | Input            | Action                                              | Next state |
-| ------- | ---------------- | --------------------------------------------------- | ---------- |
-| Normal  | run of a letter  | substitute field (`y M L d E c`; unknown → verbatim) | Normal     |
-| Normal  | `''`             | emit `'`                                            | Normal     |
-| Normal  | `'`              | open quote                                          | Literal    |
-| Normal  | any other char   | emit verbatim                                       | Normal     |
-| Literal | `''`             | emit `'`                                            | Literal    |
-| Literal | `'`              | close quote                                         | Normal     |
-| Literal | any other char   | emit verbatim                                       | Literal    |
+| State     | Input           | Action                                                | Next state |
+| --------- | --------------- | ----------------------------------------------------- | ---------- |
+| `Normal`  | run of a letter | substitute field (`y M L d E c`; unknown → verbatim)  | `Normal`   |
+| `Normal`  | `''`            | emit `'`                                              | `Normal`   |
+| `Normal`  | `'`             | open quote                                            | `Literal`  |
+| `Normal`  | any other char  | emit verbatim                                         | `Normal`   |
+| `Literal` | `''`            | emit `'`                                              | `Literal`  |
+| `Literal` | `'`             | close quote                                           | `Normal`   |
+| `Literal` | any other char  | emit verbatim                                         | `Literal`  |
 
-Parsing starts in **Normal** and ends in whichever state the input runs out in.
-
-Reading a whole run as one field (rather than matching a fixed token list) is
-why every run length is handled uniformly: `M`→`1`, `MM`→`01`, `MMM`→`Jan`,
-`MMMM`→`January`, `MMMMM`→`J` (narrow). The same applies to `d`, `y`, `E`, `c`,
-and `L`.
+Parsing starts in `Normal`. Reading a whole run as one field is why every length
+is handled uniformly: `M`→`1`, `MM`→`01`, `MMM`→`Jan`, `MMMM`→`January`,
+`MMMMM`→`J`.
 
 ---
 
 ## Supported Languages
 
-Datify supports all languages provided by
+Datify supports every locale provided by
 [datify-core](https://github.com/Jeomhps/datify-core?tab=readme-ov-file#supported-locales).
-Region-specific or unknown codes resolve through datify-core's CLDR fallback
-chain: the trailing subtags are dropped one at a time (e.g. `fr-CA` → `fr`), and
-anything still unresolved falls back to the default locale (`en`). Formatting
-therefore never errors on an unrecognized language code.
+Region-specific or unknown codes resolve through its CLDR fallback chain: the
+trailing subtags are dropped one at a time (e.g. `fr-CA` → `fr`), and anything
+still unresolved falls back to the default locale (`en`). Formatting therefore
+never errors on an unrecognized language code.
 
 ---
 
@@ -240,20 +245,20 @@ CLDR-only (its data is generated from the Unicode CLDR, not hand-edited).
 
 ## License
 
-MIT © 2026 Jeomhps CLDR data © Unicode, Inc., used under the
+MIT © 2026 Jeomhps. CLDR data © Unicode, Inc., used under the
 [Unicode License](https://unicode.org/copyright.html).
 
 ---
 
 ## Development & Testing
 
-To run the full test suite locally, you have two options:
+Run the test suite locally with either:
 
-1. **Using [tt (tytanic)](https://github.com/taiki-e/tytanic)**
+1. [tt (tytanic)](https://github.com/typst-community/tytanic):
    ```sh
    tt run
    ```
-2. **Using [act](https://github.com/nektos/act)**
+2. [act](https://github.com/nektos/act) (runs the CI workflow):
    ```sh
    act --artifact-server-path /tmp/artifact
    ```
@@ -261,26 +266,27 @@ To run the full test suite locally, you have two options:
 ### Developing against a local `datify-core`
 
 Datify depends on the published `@preview/datify-core`. To iterate on both
-packages together before publishing, make your local `datify-core` checkout
-resolvable under the same namespace by linking it into Typst's local package
-directory (it overrides the downloaded copy of that version):
+packages before publishing, link your local `datify-core` checkout into Typst's
+local package directory (it overrides the downloaded copy of that version):
 
 ```sh
-# Linux/macOS — adjust the version to match the pin in src/formats.typ
+# Linux/macOS — match the version to the pin in src/formats.typ
 DEST="${XDG_DATA_HOME:-$HOME/.local/share}/typst/packages/preview/datify-core/2.0.0"
 mkdir -p "$DEST"
 cp -r /path/to/datify-core/typst.toml /path/to/datify-core/src "$DEST"/
 ```
 
-Re-run the copy after each change to `datify-core`, then `tt run` here picks up
-the local version. (On Windows the package dir is `%APPDATA%\typst\packages`.)
+Re-run the copy after each `datify-core` change, then `tt run` picks up the local
+version. (On Windows the package directory is `%APPDATA%\typst\packages`.)
 
 ---
 
 ## Glossary
 
-- **CLDR**: Unicode Common Locale Data Repository, a project for locale-specific
-  data (e.g., date formats, language rules).
-- **ISO 639-1**: Two-letter codes for representing languages (e.g., `en` for
-  English, `fr` for French).
-- **Typst**: A markup-based typesetting system.
+- **CLDR** — Unicode Common Locale Data Repository, the source of locale-specific
+  data (date formats, names, language rules).
+- **Field symbol** — a CLDR pattern letter such as `y`, `M`, `d`, `E` whose run
+  length selects a representation (e.g. `M` vs `MMMM`).
+- **ISO 639** — standard language codes (e.g. `en`, `fr`), optionally with a
+  region subtag (e.g. `fr-CA`).
+- **Typst** — a markup-based typesetting system.
