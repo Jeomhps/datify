@@ -93,6 +93,16 @@
 #let pt_date = datetime(year: 2025, month: 10, day: 3)
 #assert.eq(custom-date-format(pt_date, pattern: "EEEE, dd 'de' MMMM 'de' yyyy", lang: "pt"), "sexta-feira, 03 de outubro de 2025")
 
+// --- Community overlay flag is threaded through to datify-core ---
+#let mon = datetime(year: 2025, month: 1, day: 6) // Monday, January
+// The overlay changes only the narrow weekday (Brazilian numbered form).
+#assert.eq(custom-date-format(mon, pattern: "EEEEE", lang: "pt-BR"), "S")
+#assert.eq(custom-date-format(mon, pattern: "EEEEE", lang: "pt-BR", community: true), "2ª")
+#assert.eq(custom-date-format(mon, pattern: "ccccc", lang: "pt-BR", community: true), "2ª")
+// Other cells stay CLDR even with community: true (casing is the caller's job).
+#assert.eq(custom-date-format(mon, pattern: "cccc", lang: "pt-BR", community: true), "segunda-feira")
+#assert.eq(custom-date-format(mon, pattern: "LLLL", lang: "pt-BR", community: true), "janeiro")
+
 // --- Stand-alone weekday `cccc` inside named patterns (fi, smn) ---
 #assert.eq(custom-date-format(sept, pattern: "cccc", lang: "fi"), "tiistai")
 #assert.eq(custom-date-format(sept, pattern: "full", lang: "fi"), "tiistai 9. syyskuuta 2025")

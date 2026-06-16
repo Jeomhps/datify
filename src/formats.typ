@@ -1,4 +1,4 @@
-#import "@preview/datify-core:2.0.0": *
+#import "@preview/datify-core:2.1.0": *
 #import "utils.typ": *
 
 // Resolve a single CLDR field run (a maximal run of one letter) to its value.
@@ -8,7 +8,7 @@
 // Only the symbols that occur in the CLDR patterns datify-core ships are mapped,
 // plus their obvious siblings. Resolution is lazy: get-* is only called for the
 // runs that actually appear in the pattern.
-#let _symbol-value = (letter, n, date, lang) => {
+#let _symbol-value = (letter, n, date, lang, community) => {
   if letter == "y" {
     // yy -> last two digits; any other length -> full year
     if n == 2 { return str(date.display("[year repr:last_two]")) }
@@ -17,17 +17,17 @@
   if letter == "M" {
     if n == 1 { return str(date.month()) }
     if n == 2 { return pad(date.month(), 2) }
-    if n == 3 { return get-month-name(date.month(), lang: lang, usage: "format", width: "abbreviated") }
-    if n == 4 { return get-month-name(date.month(), lang: lang, usage: "format", width: "wide") }
-    return get-month-name(date.month(), lang: lang, usage: "format", width: "narrow")
+    if n == 3 { return get-month-name(date.month(), lang: lang, community: community, usage: "format", width: "abbreviated") }
+    if n == 4 { return get-month-name(date.month(), lang: lang, community: community, usage: "format", width: "wide") }
+    return get-month-name(date.month(), lang: lang, community: community, usage: "format", width: "narrow")
   }
   if letter == "L" {
     // stand-alone month
     if n == 1 { return str(date.month()) }
     if n == 2 { return pad(date.month(), 2) }
-    if n == 3 { return get-month-name(date.month(), lang: lang, usage: "stand-alone", width: "abbreviated") }
-    if n == 4 { return get-month-name(date.month(), lang: lang, usage: "stand-alone", width: "wide") }
-    return get-month-name(date.month(), lang: lang, usage: "stand-alone", width: "narrow")
+    if n == 3 { return get-month-name(date.month(), lang: lang, community: community, usage: "stand-alone", width: "abbreviated") }
+    if n == 4 { return get-month-name(date.month(), lang: lang, community: community, usage: "stand-alone", width: "wide") }
+    return get-month-name(date.month(), lang: lang, community: community, usage: "stand-alone", width: "narrow")
   }
   if letter == "d" {
     if n == 1 { return str(date.day()) }
@@ -35,15 +35,15 @@
   }
   if letter == "E" {
     // format weekday
-    if n <= 3 { return get-day-name(date.weekday(), lang: lang, usage: "format", width: "abbreviated") }
-    if n == 4 { return get-day-name(date.weekday(), lang: lang, usage: "format", width: "wide") }
-    return get-day-name(date.weekday(), lang: lang, usage: "format", width: "narrow")
+    if n <= 3 { return get-day-name(date.weekday(), lang: lang, community: community, usage: "format", width: "abbreviated") }
+    if n == 4 { return get-day-name(date.weekday(), lang: lang, community: community, usage: "format", width: "wide") }
+    return get-day-name(date.weekday(), lang: lang, community: community, usage: "format", width: "narrow")
   }
   if letter == "c" {
     // stand-alone weekday
-    if n <= 3 { return get-day-name(date.weekday(), lang: lang, usage: "stand-alone", width: "abbreviated") }
-    if n == 4 { return get-day-name(date.weekday(), lang: lang, usage: "stand-alone", width: "wide") }
-    return get-day-name(date.weekday(), lang: lang, usage: "stand-alone", width: "narrow")
+    if n <= 3 { return get-day-name(date.weekday(), lang: lang, community: community, usage: "stand-alone", width: "abbreviated") }
+    if n == 4 { return get-day-name(date.weekday(), lang: lang, community: community, usage: "stand-alone", width: "wide") }
+    return get-day-name(date.weekday(), lang: lang, community: community, usage: "stand-alone", width: "narrow")
   }
   // Unhandled field symbol (e.g. era `G`): pass through verbatim.
   return none
@@ -53,6 +53,7 @@
   date,
   pattern: "full",
   lang: "en",
+  community: false,
 ) => {
   // Validate date type (must be a datetime)
   if type(date) != datetime {
@@ -76,7 +77,7 @@
       or pattern == "medium"
       or pattern == "short"
   ) {
-    pattern = get-date-pattern(pattern, lang: lang)
+    pattern = get-date-pattern(pattern, lang: lang, community: community)
   }
 
   // Parse the pattern string into the final result.
@@ -133,7 +134,7 @@
       run_length += 1
     }
 
-    let value = _symbol-value(current_char, run_length, date, lang)
+    let value = _symbol-value(current_char, run_length, date, lang, community)
     if (value == none) {
       // Unhandled symbol or ordinary literal character(s): pass through.
       result += safe-slice(
@@ -170,10 +171,11 @@
 #let display-date = (
   date,
   pattern: "full",
+  community: false,
 ) => context {
   let code = text.lang
   if text.region != none {
     code += "-" + text.region
   }
-  custom-date-format(date, pattern: pattern, lang: code)
+  custom-date-format(date, pattern: pattern, lang: code, community: community)
 }
